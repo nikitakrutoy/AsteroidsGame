@@ -9,8 +9,8 @@
 
 #include "SceneManager.h"
 
-void SceneManager::AddScene(std::shared_ptr<Scene>& s) {
-    scenes.insert({s->getTypeIndex(), s});
+void SceneManager::AddScene(std::string name, std::shared_ptr<Scene>& s) {
+    scenes.insert({name, s});
 }
 
 void SceneManager::Delete() {

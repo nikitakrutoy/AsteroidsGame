@@ -11,7 +11,7 @@
 #include "Scene.h"
 class SceneManager {
 private:
-    std::map<std::type_index, std::shared_ptr<Scene>> scenes;
+    std::map<std::string, std::shared_ptr<Scene>> scenes;
     std::shared_ptr<Rasterizer> rasterizer;
 
 public:
@@ -19,13 +19,11 @@ public:
 
     SceneManager() = default;
 
-    void AddScene(std::shared_ptr<Scene>& s);
+    void AddScene(std::string name, std::shared_ptr<Scene>& s);
 
-    template<typename T>
-    void SetScene() {
-        currentScene = scenes[typeid(T)];
+    void SetScene(std::string name) {
+        currentScene = scenes[name];
         currentScene->setRasterizer(rasterizer);
-        currentScene->Init();
     }
 
     void SetRasterizer(std::shared_ptr<Rasterizer> r);
