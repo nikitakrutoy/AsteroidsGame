@@ -15,13 +15,14 @@ private:
     SpaceObject player{};
     std::vector<Asteroid> asteroids{};
     std::vector<Projectile> projectiles{};
-    std::vector<TextObject> texts{};
+    ScoreText scoreText{};
+    LivesText livesText{};
     Point startPoint{};
 protected:
     void Draw() override;
 
 public:
-    GameFieldScene() {typeIndex = typeid(*this);}
+    GameFieldScene() = default;
     void setRasterizer(std::shared_ptr<Rasterizer> r) override;
     void Init() override;
     void Update(float dt) override;

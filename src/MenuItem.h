@@ -44,13 +44,16 @@ protected:
 };
 
 
-template<typename T>
+
 struct SceneMenuItem: MenuItem  {
 public:
-    SceneMenuItem(std::string text, Point p): MenuItem(text, p){};
+    SceneMenuItem(std::string text, std::string sceneName, bool doReset, Point p):
+        MenuItem(text, p), sceneName(sceneName), doReset(doReset){};
 
 private:
     bool enterWasPressed = false;
+    bool doReset = false;
+    std::string sceneName;
 protected:
     void Update(float dt) override{
         MenuItem::Update(dt);
@@ -59,7 +62,8 @@ protected:
         }
 
         if (!is_key_pressed(VK_RETURN) && enterWasPressed && isSelected) {
-            sceneManager.SetScene<T>();
+            sceneManager.SetScene(sceneName);
+            if (doReset) sceneManager.currentScene->Init();
             enterWasPressed = false;
         }
     }

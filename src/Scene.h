@@ -11,11 +11,6 @@
 struct Scene: GameObject {
     Scene() = default;
     virtual void Init() {};
-    std::type_index getTypeIndex() {
-        return typeIndex;
-    }
-protected:
-    std::type_index typeIndex = typeid(int);
 };
 
 #endif //GAME_SCENE_H

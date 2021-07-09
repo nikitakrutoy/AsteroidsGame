@@ -9,6 +9,7 @@
 #include <iostream>
 #include "Rasterizer.h"
 #include "Geometry.h"
+#include "GameState.h"
 
 
 struct GameObject {
@@ -50,9 +51,36 @@ protected:
 
 struct TextObject: GameObject {
     std::string text;
+    size_t size;
+    Color c;
+    size_t spacing;
+    bool align;
+
+    TextObject() = default;
+
+    TextObject(const std::string &text, Point p, size_t size,
+               const Color &c, size_t spacing, bool align) :   text(text),
+                                                               size(size), c(c),
+                                                               spacing(spacing),
+                                                               align(align) {position = p;}
+
+    TextObject(std::string text): text(text) {};
     void Draw() override {
-        r->drawText(text, position);
+        r->drawText(text, position, size, c, spacing, align);
     }
+};
+
+struct LivesText: TextObject{
+    LivesText() =default;
+    LivesText(const std::string &text, Point p, size_t size, const Color &c,
+               size_t spacing, bool align) : TextObject(text, p, size, c, spacing, align) {};
+    void Update(float dt) override {text = "Lives: " + std::to_string(GameState::lives);}
+};
+struct ScoreText: TextObject{
+    ScoreText() =default;
+    ScoreText(const std::string &text, Point p, size_t size, const Color &c,
+              size_t spacing, bool align) : TextObject(text, p, size, c, spacing, align) {};
+    void Update(float dt) override {text = "Score: " + std::to_string(GameState::score);}
 };
 
 struct SpaceObject: GameObject {

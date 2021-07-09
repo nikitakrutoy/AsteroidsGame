@@ -7,6 +7,7 @@
 
 #define SPACE_LENGTH 5
 #define GAMEOVER_TEXT_SIZE 48
+#define TITLE_TEXT_SIZE 96
 #define NORMAL_TEXT_SIZE 24
 
 #define MAX_LIVES 1

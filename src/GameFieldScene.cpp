@@ -10,7 +10,7 @@
 #include "SceneManager.h"
 #include "GameState.h"
 #include "GameFieldScene.h"
-#include "GameOverScene.h"
+#include "MenuScene.h"
 #include "MagicNumbers.h"
 
 
@@ -49,10 +49,12 @@ void GameFieldScene::Init() {
     startPoint = Point(r->width / 2, r->height / 2);
     player.position = startPoint;
     player.setRasterizer(r);
-    texts = std::vector<TextObject>(2);
-    texts[0].position = Point(10, 10);
-    texts[1].position = Point(10, 40);
-    for (auto &t : texts) t.setRasterizer(r);
+    scoreText = ScoreText("", Point(10, 10), NORMAL_TEXT_SIZE, Color(),  2, false);
+    livesText = LivesText("", Point(10, NORMAL_TEXT_SIZE + 20),
+                                    NORMAL_TEXT_SIZE, Color(),  2, false);
+
+    scoreText.setRasterizer(r);
+    livesText.setRasterizer(r);
     GameState::lives = MAX_LIVES;
     GameState::score = 0;
     asteroids.clear();
@@ -66,20 +68,22 @@ void GameFieldScene::Draw()  {
     player.SafeDraw();
     for (auto &a : asteroids) a.SafeDraw();
     for (auto &p : projectiles) p.SafeDraw();
-    for (auto &t : texts) t.SafeDraw();
+    livesText.SafeDraw();
+    scoreText.SafeDraw();
 }
 
 void GameFieldScene::Update(float dt) {
     if (GameState::lives <= 0) {
-        sceneManager.SetScene<GameOverScene>();
+        sceneManager.SetScene("GameOver");
+        sceneManager.currentScene->Init();
         return;
     }
     player.SafeUpdate(dt);
     for (auto &a : asteroids) a.SafeUpdate(dt);
     for (auto &p : projectiles) p.SafeUpdate(dt);
+    livesText.SafeUpdate(dt);
+    scoreText.SafeUpdate(dt);
 
-    texts[0].text = "Score: " + std::to_string(GameState::score);
-    texts[1].text = "Lives: " + std::to_string(GameState::lives);
 
     if (DetectCollisions(player.position)) {
         std::cout << "Starship crashed!" << std::endl;
@@ -99,8 +103,12 @@ void GameFieldScene::Update(float dt) {
     }
 
 
-    if (is_key_pressed(VK_ESCAPE))
-        schedule_quit_game();
+    if (is_key_pressed(VK_ESCAPE)){
+        sceneManager.SetScene("Pause");
+        sceneManager.currentScene->Init();
+        return;
+    }
+
 
     if (is_key_pressed(VK_RIGHT))
         player.Rotate(2 * dt);
@@ -166,7 +174,8 @@ void GameFieldScene::Delete() {
     player.Delete();
     for (auto &a : asteroids) a.Delete();
     for (auto &p : projectiles) p.Delete();
-    for (auto &t : texts) t.Delete();
+    livesText.Delete();
+    scoreText.Delete();
 
 }
 

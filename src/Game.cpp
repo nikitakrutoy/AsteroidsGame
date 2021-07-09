@@ -1,7 +1,7 @@
 #include "Engine.h"
 #include <algorithm>
 #include "GameFieldScene.h"
-#include "GameOverScene.h"
+#include "MenuScene.h"
 #include "SceneManager.h"
 #include "GameState.h"
 #include "MagicNumbers.h"
@@ -21,12 +21,18 @@ void initialize()
 {
     std::shared_ptr<Scene> gameField = std::shared_ptr<Scene>(new GameFieldScene());
     std::shared_ptr<Scene> gameOver = std::shared_ptr<Scene>(new GameOverScene());
+    std::shared_ptr<Scene> pauseMenu = std::shared_ptr<Scene>(new PauseScene());
+    std::shared_ptr<Scene> mainMenu = std::shared_ptr<Scene>(new TitleScene());
+//    std::shared_ptr<Scene> levelsMenu = std::shared_ptr<Scene>(new TitleScene());
     std::shared_ptr<Rasterizer> rasterizer =std::shared_ptr<Rasterizer>(
             new Rasterizer(&buffer[0][0], SCREEN_HEIGHT, SCREEN_WIDTH));
     sceneManager.SetRasterizer(rasterizer);
-    sceneManager.AddScene(gameField);
-    sceneManager.AddScene(gameOver);
-    sceneManager.SetScene<GameFieldScene>();
+    sceneManager.AddScene("GameField", gameField);
+    sceneManager.AddScene("GameOver", gameOver);
+    sceneManager.AddScene("Pause", pauseMenu);
+    sceneManager.AddScene("MainMenu", mainMenu);
+    sceneManager.SetScene("MainMenu");
+    sceneManager.currentScene->Init();
 }
 
 // this function is called to update game data,
