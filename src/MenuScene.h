@@ -14,7 +14,7 @@
 
 struct MenuScene: Scene {
 private:
-    size_t selectedMenuItem = 0;
+
     bool upWasPressed = false;
     bool downWasPressed = false;
 
@@ -28,6 +28,7 @@ public:
 
 
 protected:
+    size_t selectedMenuItem = 0;
     std::vector<MenuItem*> menuItems;
     std::vector<TextObject*> labels;
     void Update(float dt) override;
@@ -54,5 +55,17 @@ struct PauseScene: MenuScene {
 struct TitleScene: MenuScene {
     void Init() override;
 };
+
+struct LevelsScene: MenuScene {
+    void Init() override;
+
+protected:
+    std::vector<std::string> descriptions;
+    void Update(float dt) override {
+        labels[1]->text = descriptions[selectedMenuItem];
+        MenuScene::Update(dt);
+    }
+};
+
 
 #endif //GAME_MENUSCENE_H

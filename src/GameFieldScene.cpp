@@ -55,7 +55,7 @@ void GameFieldScene::Init() {
 
     scoreText.setRasterizer(r);
     livesText.setRasterizer(r);
-    GameState::lives = MAX_LIVES;
+    GameState::lives = lives;
     GameState::score = 0;
     asteroids.clear();
     projectiles.clear();
@@ -102,13 +102,11 @@ void GameFieldScene::Update(float dt) {
         }
     }
 
-
     if (is_key_pressed(VK_ESCAPE)){
         sceneManager.SetScene("Pause");
         sceneManager.currentScene->Init();
         return;
     }
-
 
     if (is_key_pressed(VK_RIGHT))
         player.Rotate(2 * dt);
@@ -176,7 +174,6 @@ void GameFieldScene::Delete() {
     for (auto &p : projectiles) p.Delete();
     livesText.Delete();
     scoreText.Delete();
-
 }
 
 

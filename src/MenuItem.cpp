@@ -3,6 +3,7 @@
 //
 
 #include "MenuItem.h"
-MenuItem::MenuItem(std::string text, Point p): text(text) {
+MenuItem::MenuItem(std::string text, Point p, bool align):
+    text(text), align(align){
     position = p;
 }

@@ -14,7 +14,8 @@
 struct MenuItem: GameObject {
     std::string text;
     bool isSelected = false;
-    MenuItem(std::string text, Point p);
+    bool align = true;
+    MenuItem(std::string text, Point p, bool align = true);
 protected:
     void Draw() override{
         Color c = Color();
@@ -22,7 +23,7 @@ protected:
             float v = std::round((std::sin(elapsedTime * 10) + 1));
             c = c * v;
         }
-        r->drawText(text, position, NORMAL_TEXT_SIZE, c, 2, true);
+        r->drawText(text, position, NORMAL_TEXT_SIZE, c, 2, align);
     }
     void Update(float dt) override{
         elapsedTime += dt;
@@ -47,8 +48,8 @@ protected:
 
 struct SceneMenuItem: MenuItem  {
 public:
-    SceneMenuItem(std::string text, std::string sceneName, bool doReset, Point p):
-        MenuItem(text, p), sceneName(sceneName), doReset(doReset){};
+    SceneMenuItem(std::string text, std::string sceneName, bool doReset, Point p, bool align = true):
+        MenuItem(text, p, align), sceneName(sceneName), doReset(doReset){};
 
 private:
     bool enterWasPressed = false;

@@ -11,6 +11,9 @@ struct GameFieldScene: Scene {
 private:
     void InitAsteroids(size_t quantity);
     bool wasSpacePressed = false;
+    bool isInfinite = false;
+    size_t quantity = 10;
+    size_t lives = 3;
 
     SpaceObject player{};
     std::vector<Asteroid> asteroids{};
@@ -23,6 +26,8 @@ protected:
 
 public:
     GameFieldScene() = default;
+    GameFieldScene(size_t quantity, bool isInfinite, size_t lives = 3):
+        quantity(quantity), isInfinite(isInfinite), lives(lives){};
     void setRasterizer(std::shared_ptr<Rasterizer> r) override;
     void Init() override;
     void Update(float dt) override;

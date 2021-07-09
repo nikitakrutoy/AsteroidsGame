@@ -85,7 +85,32 @@ void PauseScene::Init() {
     MenuScene::Init();
 }
 
-
+void LevelsScene::Init() {
+    position = Point(100, r->height / 2 - 80);
+    menuItems = std::vector<MenuItem*>({
+           new SceneMenuItem(
+                   "Level1", "Level1", true,
+                   position.Translate(Point(0, 100)), false),
+           new SceneMenuItem(
+                   "Level2", "Level2", true,
+                   position.Translate(Point(0, 135)), false),
+           new SceneMenuItem(
+                   "Level3", "Level3", true,
+                   position.Translate(Point(0, 170)), false),
+           new SceneMenuItem(
+                   "Back", "MainMenu", true,
+                   position.Translate(Point(0, 205)), false),
+    });
+    labels = std::vector<TextObject*>({
+          new TextObject("Select Level", position, GAMEOVER_TEXT_SIZE, Color(), 2, false),
+          new TextObject("", Point(500, r->height / 2 - 80),
+                         GAMEOVER_TEXT_SIZE, Color(), 2, false)
+    });
+    descriptions = std::vector<std::string>({
+        "123", "456", "345", "Hello my brother"
+    });
+    MenuScene::Init();
+}
 
 
 void TitleScene::Init() {
@@ -94,11 +119,11 @@ void TitleScene::Init() {
     menuItems = std::vector<MenuItem*>({
            new SceneMenuItem(
                    "Infinite Mode", "GameField", true, center),
-//           new SceneMenuItem(
-//                   "Select Level", "GameField", true,
-//                   position.Translate(Point(0, 135))),
+           new SceneMenuItem(
+                   "Select Level", "Levels", true,
+                   center.Translate(Point(0, NORMAL_TEXT_SIZE + 10))),
            new ExitMenuItem(
-                   "Exit", center.Translate(Point(0, NORMAL_TEXT_SIZE + 10)))
+                   "Exit", center.Translate(Point(0, 2 * (NORMAL_TEXT_SIZE + 10))))
     });
     labels = std::vector<TextObject*>({
           new TextObject("Asteroids", position, TITLE_TEXT_SIZE, Color(), 10, true),
