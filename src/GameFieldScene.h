@@ -21,10 +21,11 @@ protected:
     void Draw() override;
 
 public:
-    GameFieldScene() = default;
+    GameFieldScene() {typeIndex = typeid(*this);}
     void setRasterizer(std::shared_ptr<Rasterizer> r) override;
     void Init() override;
     void Update(float dt) override;
+    void Delete() override;
     bool DetectCollisions(Point p);
 };
 #endif //GAME_GAMEFIELDSCENE_H

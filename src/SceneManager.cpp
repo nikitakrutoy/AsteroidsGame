@@ -9,24 +9,21 @@
 
 #include "SceneManager.h"
 
-int SceneManager::AddScene(std::shared_ptr<Scene> s) {
-    scenes.push_back(s);
-    return scenes.size() - 1;
+void SceneManager::AddScene(std::shared_ptr<Scene>& s) {
+    scenes.insert({s->getTypeIndex(), s});
 }
 
-void SceneManager::SetScene(size_t i) {
-    currentScene = scenes[i];
-    currentScene->setRasterizer(rasterizer);
-    currentScene->Init();
-
+void SceneManager::Delete() {
+    rasterizer.reset();
+    for (auto& kv: scenes) {
+        kv.second->Delete();
+        kv.second.reset();
+    }
 }
 
 void SceneManager::SetRasterizer(std::shared_ptr<Rasterizer> r) {
     rasterizer = r;
 }
 
-void SceneManager::Delete() {
-    rasterizer.reset();
-    for (auto s: scenes) s.reset();
-}
+
 #endif //GAME_SCENEMANAGER_CPP

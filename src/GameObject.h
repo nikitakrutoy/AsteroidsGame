@@ -39,6 +39,10 @@ struct GameObject {
         }
     }
 
+    virtual void Delete() {
+        r.reset();
+    }
+
 protected:
     virtual void Draw() {};
     virtual void Update(float dt) {};
@@ -60,22 +64,22 @@ struct SpaceObject: GameObject {
 
     explicit SpaceObject(Path path) : path(std::move(path)) {};
 
-    void Update(float dt) override;
     void Boost(float amount);
     virtual void Rotate(float degree);
 protected:
     void Draw() override;
+    void Update(float dt) override;
 };
 
 struct Projectile: SpaceObject {
     explicit Projectile(Path &path) : SpaceObject(path) {};
-    void Update(float dt) override{
-        position = position.Translate(velocity.Scale(speed));
-    }
 
 protected:
     void Draw() override {
         r->drawBlob(position, 1);
+    }
+    void Update(float dt) override{
+        position = position.Translate(velocity.Scale(speed));
     }
 };
 

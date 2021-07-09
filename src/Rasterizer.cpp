@@ -24,6 +24,13 @@ uint32_t Color::ToUInt32() const {
     return rgb;
 }
 
+Color Color::operator*(float v) const {
+    return Color(
+            std::min(R * v, 1.0f),
+            std::min(G * v, 1.0f),
+            std::min(B * v, 1.0f)
+            );
+}
 
 
 Rasterizer::Rasterizer(uint32_t *buffer, size_t height, size_t width) : buf(buffer), height(height), width(width) {
@@ -117,27 +124,27 @@ void Rasterizer::drawLine(Point p1, Point p2, Color c) {
     }
 }
 
-void Rasterizer::drawPath(Path& p) {
+void Rasterizer::drawPath(Path& p, Color c) {
     int i;
     for (i = 0; i < p.data.size() - 1; i++) {
-        drawLine(p.data[i], p.data[i + 1]);
+        drawLine(p.data[i], p.data[i + 1], c);
     }
     if (p.isClosed)
-        drawLine(p.data[i], p.data[0]);
+        drawLine(p.data[i], p.data[0], c);
 }
 
-void Rasterizer::drawGlyph(FT_Bitmap& bm, Point position) {
+void Rasterizer::drawGlyph(FT_Bitmap& bm, Point position, Color color) {
     for (int i = 0; i < bm.rows; i++) {
         for (int j = 0; j < bm.width; j++) {
             float r = bm.buffer[i * bm.width + j] / 255;
-            Color c = Color(r ,r ,r);
+            Color c = color * r;
             setPixel(position.x + j, position.y + i, c);
             ;
         }
     }
 }
 
-void Rasterizer::drawChar(char ch, Point position) {
+void Rasterizer::drawChar(char ch, Point position, Color color) {
     FT_Set_Pixel_Sizes(face, 0, 48);
     if (FT_Load_Char(face, ch, FT_LOAD_RENDER))
     {
@@ -145,7 +152,7 @@ void Rasterizer::drawChar(char ch, Point position) {
     }
     auto error = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
     FT_Bitmap bm = face->glyph->bitmap;
-    drawGlyph(bm, position);
+    drawGlyph(bm, position, color);
 }
 
 void Rasterizer::fillColor(Color c) {
@@ -155,7 +162,7 @@ void Rasterizer::fillColor(Color c) {
 }
 
 
-void Rasterizer::drawText(const std::string& text, Point position, float size, float space, bool align) {
+void Rasterizer::drawText(const std::string& text, Point position, float size, Color c, float space, bool align) {
     FT_Set_Pixel_Sizes(face, 0, size);
     if (align) {
         int text_width = 0;
@@ -181,7 +188,7 @@ void Rasterizer::drawText(const std::string& text, Point position, float size, f
         }
         FT_Bitmap bm = face->glyph->bitmap;
         int bt = face->glyph->bitmap_top;
-        drawGlyph(bm, position.Translate(Point(0, (size-bt))));
+        drawGlyph(bm, position.Translate(Point(0, (size-bt))), c);
         position = position.Translate(Point(bm.width + space, 0));
         if (ch == char(32))
             position = position.Translate(Point(space * SPACE_LENGTH, 0));

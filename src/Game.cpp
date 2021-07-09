@@ -4,7 +4,7 @@
 #include "GameOverScene.h"
 #include "SceneManager.h"
 #include "GameState.h"
-
+#include "MagicNumbers.h"
 
 
 #define NANOSVG_IMPLEMENTATION	// Expands implementation
@@ -13,7 +13,7 @@
 
 SceneManager sceneManager;
 
-unsigned int GameState::lives = 3;
+unsigned int GameState::lives = MAX_LIVES;
 unsigned int GameState::score = 0;
 
 // initialize game data in this function
@@ -24,9 +24,9 @@ void initialize()
     std::shared_ptr<Rasterizer> rasterizer =std::shared_ptr<Rasterizer>(
             new Rasterizer(&buffer[0][0], SCREEN_HEIGHT, SCREEN_WIDTH));
     sceneManager.SetRasterizer(rasterizer);
-//    sceneManager.AddScene(gameField);
+    sceneManager.AddScene(gameField);
     sceneManager.AddScene(gameOver);
-    sceneManager.SetScene(0);
+    sceneManager.SetScene<GameFieldScene>();
 }
 
 // this function is called to update game data,

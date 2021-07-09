@@ -10,8 +10,9 @@
 #include "SceneManager.h"
 #include "GameState.h"
 #include "GameFieldScene.h"
+#include "GameOverScene.h"
+#include "MagicNumbers.h"
 
-extern SceneManager sceneManager;
 
 void GameFieldScene::InitAsteroids(size_t quantity) {
     std::random_device rand_dev;
@@ -52,6 +53,10 @@ void GameFieldScene::Init() {
     texts[0].position = Point(10, 10);
     texts[1].position = Point(10, 40);
     for (auto &t : texts) t.setRasterizer(r);
+    GameState::lives = MAX_LIVES;
+    GameState::score = 0;
+    asteroids.clear();
+    projectiles.clear();
     InitAsteroids(20);
 };
 
@@ -66,12 +71,12 @@ void GameFieldScene::Draw()  {
 
 void GameFieldScene::Update(float dt) {
     if (GameState::lives <= 0) {
-        sceneManager.SetScene(1);
+        sceneManager.SetScene<GameOverScene>();
         return;
     }
-    player.Update(dt);
-    for (auto &a : asteroids) a.Update(dt);
-    for (auto &p : projectiles) p.Update(dt);
+    player.SafeUpdate(dt);
+    for (auto &a : asteroids) a.SafeUpdate(dt);
+    for (auto &p : projectiles) p.SafeUpdate(dt);
 
     texts[0].text = "Score: " + std::to_string(GameState::score);
     texts[1].text = "Lives: " + std::to_string(GameState::lives);
@@ -154,6 +159,15 @@ bool GameFieldScene::DetectCollisions(Point p) {
     }
     as.shrink_to_fit();
     return result;
+}
+
+void GameFieldScene::Delete() {
+    Scene::Delete();
+    player.Delete();
+    for (auto &a : asteroids) a.Delete();
+    for (auto &p : projectiles) p.Delete();
+    for (auto &t : texts) t.Delete();
+
 }
 
 

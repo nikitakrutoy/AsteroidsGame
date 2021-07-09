@@ -6,10 +6,12 @@
 #define GAME_SCENEMANAGER_H
 
 
+#include <typeindex>
+#include <map>
 #include "Scene.h"
 class SceneManager {
 private:
-    std::vector<std::shared_ptr<Scene>> scenes;
+    std::map<std::type_index, std::shared_ptr<Scene>> scenes;
     std::shared_ptr<Rasterizer> rasterizer;
 
 public:
@@ -17,9 +19,14 @@ public:
 
     SceneManager() = default;
 
-    int AddScene(std::shared_ptr<Scene> s);
+    void AddScene(std::shared_ptr<Scene>& s);
 
-    void SetScene(size_t i);
+    template<typename T>
+    void SetScene() {
+        currentScene = scenes[typeid(T)];
+        currentScene->setRasterizer(rasterizer);
+        currentScene->Init();
+    }
 
     void SetRasterizer(std::shared_ptr<Rasterizer> r);
 

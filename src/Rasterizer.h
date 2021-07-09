@@ -14,6 +14,8 @@ struct Color {
     explicit Color(float r = 1.0f, float g = 1.0f, float b = 1.0f, float a = 1.0f) :
             R(r), G(g), B(b), A(a) {};
     uint32_t ToUInt32() const;
+
+    Color operator*(float v) const;
 };
 
 struct Rasterizer {
@@ -28,9 +30,11 @@ public:
     void fillColor(Color c = Color(0, 0, 0));
     void drawBlob(Point p, int size = 1, Color c = Color());
     void drawLine(Point p1, Point p2, Color c = Color());
-    void drawPath(Path& p);
-    void drawGlyph(FT_Bitmap& bm, Point position);
-    void drawChar(char ch, Point position);
-    void drawText(const std::string& text, Point position, float size = 24, float space = 2, bool align = false);
+    void drawPath(Path& p, Color c = Color());
+    void drawGlyph(FT_Bitmap& bm, Point position, Color c = Color());
+    void drawChar(char ch, Point position, Color c = Color());
+    void drawText(const std::string& text, Point position, float size = 24,
+                  Color c = Color(), float space = 2, bool align = false);
+
 };
 #endif //GAME_RASTERIZER_H
