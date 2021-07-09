@@ -23,7 +23,7 @@ include_directories(./lib/include)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 
 set(CMAKE_CONFIGURATION_TYPES "Debug" "Release")
-file(GLOB SRC *.cpp)
+file(GLOB SRC src/*.cpp)
 add_executable(game ${SRC})
 target_link_libraries(game LINK_PUBLIC ${X11_LIBRARIES})
 target_link_libraries(game LINK_PUBLIC ${freetypeLib})
