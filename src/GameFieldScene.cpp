@@ -13,10 +13,6 @@
 #include "MagicNumbers.h"
 #include "Geometry.h"
 
-
-
-
-
 void GameFieldScene::InitAsteroids(size_t quantity) {
     std::random_device rand_dev;
     std::mt19937 generator(rand_dev());
@@ -65,7 +61,7 @@ void GameFieldScene::Init() {
     GameState::score = 0;
     asteroids.clear();
     projectiles.clear();
-    InitAsteroids(20);
+    InitAsteroids(quantity);
 };
 
 void GameFieldScene::Draw()  {
@@ -84,6 +80,7 @@ void GameFieldScene::Update(float dt) {
         sceneManager.currentScene->Init();
         return;
     }
+
     player.SafeUpdate(dt);
     for (auto &a : asteroids) a.SafeUpdate(dt);
     for (auto &p : projectiles) p.SafeUpdate(dt);
@@ -104,6 +101,7 @@ void GameFieldScene::Update(float dt) {
         invTimer = 0;
         player.disableInvincibility();
     }
+
     bool notInsideScreen;
     for (auto it = projectiles.begin(); it != projectiles.end();) {
         Point p = it->position;
@@ -114,28 +112,28 @@ void GameFieldScene::Update(float dt) {
 
     }
 
-    int m = 100;
 
-    for (auto &a: asteroids) {
-        Point p = a.position;
-        notInsideScreen = p.x > (r->width + m) || p.x < -m || (p.y > r->height + m) || (p.y < -m);
-        if (notInsideScreen)
-            a.position = Point(
-                    frame2(p.x, -m, r->width + m),
-                    frame2(p.y, -m, r->height + m)
-                    );
+    if (isInfinite) {
+        int m = 100;
+        for (auto &a: asteroids) {
+            Point p = a.position;
+            notInsideScreen = p.x > (r->width + m) || p.x < -m || (p.y > r->height + m) || (p.y < -m);
+            if (notInsideScreen)
+                a.position = Point(
+                        frame2(p.x, -m, r->width + m),
+                        frame2(p.y, -m, r->height + m)
+                );
+        }
+
+        asteroids.reserve(20);
+        while (asteroids.size() < 20) {
+            asteroids.emplace_back(32,Point(-10, -10),
+                                   1,!isInfinite);
+            asteroids[asteroids.size() - 1].setRasterizer(r);
+            asteroids[asteroids.size() - 1].c = Color(1, 0, 0);
+        }
+        asteroids.shrink_to_fit();
     }
-
-    asteroids.reserve(20);
-    while (asteroids.size() < 20) {
-        asteroids.emplace_back(32,Point(-10, -10),
-                1,!isInfinite);
-        asteroids[asteroids.size() - 1].setRasterizer(r);
-        asteroids[asteroids.size() - 1].c = Color(1, 0, 0);
-    }
-    asteroids.shrink_to_fit();
-
-
 
     if (is_key_pressed(VK_ESCAPE)){
         sceneManager.SetScene("Pause");

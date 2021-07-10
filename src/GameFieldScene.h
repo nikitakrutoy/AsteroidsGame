@@ -6,6 +6,8 @@
 #define GAME_GAMEFIELDSCENE_H
 
 #include "Scene.h"
+#include "LevelSpec.h"
+
 
 struct GameFieldScene: Scene {
 private:
@@ -33,6 +35,7 @@ public:
             quantity(quantity), isInfinite(isInfinite),
             lives(lives), invTime(invincibilityTime) {};
     void setRasterizer(std::shared_ptr<Rasterizer> r) override;
+    LevelSpec GetSpec() {return LevelSpec(lives, invTime, quantity);}
     void Init() override;
     void Update(float dt) override;
     void Delete() override;

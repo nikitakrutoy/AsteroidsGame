@@ -50,12 +50,12 @@ struct SceneMenuItem: MenuItem  {
 public:
     SceneMenuItem(std::string text, std::string sceneName, bool doReset, Point p, bool align = true):
         MenuItem(text, p, align), sceneName(sceneName), doReset(doReset){};
-
+    std::string GetSceneName() {return sceneName;}
 private:
     bool enterWasPressed = false;
     bool doReset = false;
-    std::string sceneName;
 protected:
+    std::string sceneName;
     void Update(float dt) override{
         MenuItem::Update(dt);
         if (is_key_pressed(VK_RETURN) && !enterWasPressed) {
@@ -70,6 +70,16 @@ protected:
     }
 };
 
+
+struct RetryMenuItem: SceneMenuItem {
+    RetryMenuItem(std::string text, bool doReset, Point p, bool align = true):
+            SceneMenuItem(text, "", doReset,  p, align) {};
+protected:
+    void Update(float dt) override {
+        sceneName = GameState::currentGameFieldSceneName;
+        SceneMenuItem::Update(dt);
+    }
+};
 
 
 #endif //GAME_MENUITEM_H

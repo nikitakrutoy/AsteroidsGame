@@ -8,5 +8,6 @@
 struct GameState {
     static unsigned int lives;
     static unsigned int score;
+    static std::string currentGameFieldSceneName;
 };
 #endif //GAME_GAMESTATE_H

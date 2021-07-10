@@ -61,10 +61,8 @@ struct LevelsScene: MenuScene {
 
 protected:
     std::vector<std::string> descriptions;
-    void Update(float dt) override {
-        labels[1]->text = descriptions[selectedMenuItem];
-        MenuScene::Update(dt);
-    }
+    std::vector<LevelSpec> levelSpecs;
+    void Update(float dt) override;
 };
 
 

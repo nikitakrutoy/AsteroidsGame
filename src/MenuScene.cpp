@@ -45,8 +45,8 @@ void MenuScene::Update(float dt) {
 void GameOverScene::Init() {
     position = Point(r->width / 2, r->height / 2 - 80);
     menuItems = std::vector<MenuItem*>({
-           new SceneMenuItem(
-                   "Retry", "GameField", true,
+           new RetryMenuItem(
+                   "Retry", true,
                    position.Translate(Point(0, 100))),
            new SceneMenuItem(
                    "Main Menu", "MainMenu", true,
@@ -68,11 +68,11 @@ void PauseScene::Init() {
            new SceneMenuItem(
                    "Continue", "GameField", false,
                    position.Translate(Point(0, 100))),
-           new SceneMenuItem(
-                   "Main Menu", "MainMenu", true,
+           new RetryMenuItem(
+                   "Retry", true,
                    position.Translate(Point(0, 135))),
            new SceneMenuItem(
-                   "Retry", "GameField", true,
+                   "Main Menu", "MainMenu", true,
                    position.Translate(Point(0, 170))),
            new ExitMenuItem(
                    "Exit", position.Translate(Point(0, 205)))
@@ -98,18 +98,47 @@ void LevelsScene::Init() {
                    "Level3", "Level3", true,
                    position.Translate(Point(0, 170)), false),
            new SceneMenuItem(
-                   "Back", "MainMenu", true,
+                   "Level4", "Level4", true,
                    position.Translate(Point(0, 205)), false),
+           new SceneMenuItem(
+                   "Back", "MainMenu", true,
+                   position.Translate(Point(0, 240)), false),
     });
     labels = std::vector<TextObject*>({
           new TextObject("Select Level", position, GAMEOVER_TEXT_SIZE, Color(), 2, false),
           new TextObject("", Point(500, r->height / 2 - 80),
-                         GAMEOVER_TEXT_SIZE, Color(), 2, false)
+                         GAMEOVER_TEXT_SIZE, Color(), 2, false),
+          new TextObject("", Point(500, r->height / 2 + 20),
+                         NORMAL_TEXT_SIZE, Color(), 2, false),
+          new TextObject("", Point(500, r->height / 2 + 55),
+                         NORMAL_TEXT_SIZE, Color(), 2, false),
+          new TextObject("", Point(500, r->height / 2 + 90),
+                         NORMAL_TEXT_SIZE, Color(), 2, false)
+
     });
     descriptions = std::vector<std::string>({
-        "123", "456", "345", "Hello my brother"
+        "Crybaby", "Midcore Gamer", "Osu! Lover", "Dark Souls Fan"
     });
+    levelSpecs = std::vector<LevelSpec>(menuItems.size());
+    for (int i = 0; i < menuItems.size() - 1; i++) {
+        auto* s = dynamic_cast<SceneMenuItem*>(menuItems[i]);
+        if (s) {
+            auto s2 = dynamic_cast<GameFieldScene*>(sceneManager.GetScene(s->GetSceneName()).get());
+            levelSpecs[i] = s2->GetSpec();
+        }
+    }
     MenuScene::Init();
+}
+
+void LevelsScene::Update(float dt) {
+    if (selectedMenuItem < menuItems.size() - 1){
+        labels[1]->text = descriptions[selectedMenuItem];
+        labels[2]->text = "lives : " + std::to_string(levelSpecs[selectedMenuItem].lives);
+        labels[3]->text = "invincibility : " + std::to_string(levelSpecs[selectedMenuItem].invTime);
+        labels[4]->text = "asteroids : " + std::to_string(levelSpecs[selectedMenuItem].quantity);
+    }
+
+    MenuScene::Update(dt);
 }
 
 
