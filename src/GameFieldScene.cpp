@@ -45,7 +45,7 @@ void GameFieldScene::setRasterizer(std::shared_ptr<Rasterizer> r)  {
 }
 void GameFieldScene::Init() {
     Path path = Path({Point(-25, -15), Point(30, 0), Point(-25, 15), Point(-10, 0)});
-    player = SpaceObject(path);
+    player = Spaceship(path);
     startPoint = Point(r->width / 2, r->height / 2);
     player.position = startPoint;
     player.setRasterizer(r);
@@ -85,11 +85,18 @@ void GameFieldScene::Update(float dt) {
     scoreText.SafeUpdate(dt);
 
 
-    if (DetectCollisions(player.position)) {
+    if (invTimer == 0 && DetectCollisions(player.position)) {
         std::cout << "Starship crashed!" << std::endl;
         player.position = startPoint;
         player.velocity = Point(0, 0);
+        player.enableInvincibility();
+        invTimer = time(nullptr);
         GameState::lives -= 1;
+    }
+
+    if (invTimer > 0 && time(nullptr) - invTimer >= invTime) {
+        invTimer = 0;
+        player.disableInvincibility();
     }
 
     for (auto it = projectiles.begin(); it != projectiles.end();) {

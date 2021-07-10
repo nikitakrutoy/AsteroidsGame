@@ -32,6 +32,22 @@ void SpaceObject::Draw()  {
     r->drawPath(p);
 }
 
+void Spaceship::Draw()  {
+    Path p = path.Scale(scale).Translate(position);
+    r->drawPath(p, c);
+}
+
+void Spaceship::Update(float dt) {
+    SpaceObject::Update(dt);
+    if (isInvincible) {
+        float v = std::round((std::sin(elapsedTime * 20) + 1));
+        std::cout << elapsedTime << std::endl;
+        c = Color() * v;
+        elapsedTime += dt;
+    }
+}
+
+
 std::random_device                  rand_dev;
 std::mt19937                        generator(rand_dev());
 std::uniform_real_distribution<float>  dist3(0, 2 * 3.14);

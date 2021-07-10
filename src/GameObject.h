@@ -99,6 +99,26 @@ protected:
     void Update(float dt) override;
 };
 
+struct Spaceship: SpaceObject {
+    Spaceship() = default;
+
+    void enableInvincibility() {
+        isInvincible = true;
+        elapsedTime = 0;
+    }
+    explicit Spaceship(Path p): SpaceObject(p) {};
+    void disableInvincibility() {
+        isInvincible = false;
+    }
+
+protected:
+    bool isInvincible = false;
+    float elapsedTime = 0;
+    Color c = Color();
+    void Draw() override;
+    void Update(float dt) override;
+};
+
 struct Projectile: SpaceObject {
     explicit Projectile(Path &path) : SpaceObject(path) {};
 
