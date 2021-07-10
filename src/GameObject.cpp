@@ -6,16 +6,16 @@
 #define GAME_GAMEOBJECT_CPP
 
 #include <random>
-#include <utility>
+#include "Geometry.h"
 #include "GameObject.h"
 
 void SpaceObject::Update(float dt) {
     position = position.Translate(velocity.Scale(speed));
-    float empty = 0;
-    position = Point(
-            int(r->width + std::floor(position.x)) % r->width + std::modf(position.x, &empty),
-            int(r->height + std::floor(position.y)) % r->height + std::modf(position.x, &empty)
-    );
+    if (isSeamless)
+        position = Point(
+                frame(position.x, r->width),
+                frame(position.y, r->height)
+        );
 }
 
 void SpaceObject::Boost(float amount) {
@@ -29,12 +29,14 @@ void SpaceObject::Rotate(float degree) {
 
 void SpaceObject::Draw()  {
     Path p = path.Scale(scale).Translate(position);
-    r->drawPath(p);
-}
+    if (isSeamless) {
+        r->enableSeamless();
+        r->drawPath(p, c);
+        r->disableSeamless();
+    } else {
+        r->drawPath(p, c);
+    }
 
-void Spaceship::Draw()  {
-    Path p = path.Scale(scale).Translate(position);
-    r->drawPath(p, c);
 }
 
 void Spaceship::Update(float dt) {
@@ -52,11 +54,14 @@ std::random_device                  rand_dev;
 std::mt19937                        generator(rand_dev());
 std::uniform_real_distribution<float>  dist3(0, 2 * 3.14);
 
-Asteroid::Asteroid(float radius, size_t quantity) {
+Asteroid::Asteroid(float radius, Point p, float s, bool seamless) {
+    position = p;
+    speed = s;
+    isSeamless = seamless;
     std::uniform_int_distribution<float>  distr(radius - 3, radius + 3);
     std::vector<Point> data;
-    data.reserve(quantity);
-    for (int i = 0; i < quantity; i++) {
+    data.reserve(20);
+    for (int i = 0; i < 20; i++) {
 
         float radian = 360 / 20 * i * (M_PI/180);
         data.emplace_back(

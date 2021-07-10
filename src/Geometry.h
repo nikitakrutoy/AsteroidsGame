@@ -7,6 +7,10 @@
 
 
 #include <vector>
+#include <cmath>
+
+float frame(float x, int y);
+float frame2(float x, int y_min, int y_max);
 
 struct Point {
     float x, y;

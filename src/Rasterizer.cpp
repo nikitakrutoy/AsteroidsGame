@@ -18,9 +18,9 @@
 
 
 uint32_t Color::ToUInt32() const {
-    auto rgb = uint32_t(B * 255);
-    rgb += uint32_t(G * 255) << 8;
-    rgb += uint32_t(R * 255) << 16;
+    auto rgb = uint32_t(std::min(int(B * 255), 255));
+    rgb += uint32_t(std::min(int(G * 255), 255)) << 8;
+    rgb += uint32_t(std::min(int(R * 255), 255)) << 16;
     return rgb;
 }
 
@@ -50,20 +50,19 @@ Rasterizer::Rasterizer(uint32_t *buffer, size_t height, size_t width) : buf(buff
             std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
         }
     }
+    isSeamless = true;
 };
 
 void Rasterizer::setPixel(int x, int y, const Color &c)
 {
     std::swap(x, y);
-    x = (height + x) % height;
-    y = (width + y) % width;
-    buf[x * width + y] = c.ToUInt32();
-//        x = (SCREEN_HEIGHT + x) % SCREEN_HEIGHT;
-//        y = (SCREEN_WIDTH + y) % SCREEN_WIDTH;
-//    if(x >= SCREEN_HEIGHT || y >= SCREEN_WIDTH)
-//        return;
+    if (isSeamless){
+        x = (height + x) % height;
+        y = (width + y) % width;
+    }
+    if (x >= height || y >= width || x <= 0 || y <= 0) return;
 
-//        buf[x][y] = c.ToUInt32();
+    buf[x * width + y] = c.ToUInt32();
 }
 
 void Rasterizer::drawBlob(Point p, int size, Color c) {

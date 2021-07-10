@@ -87,14 +87,18 @@ struct SpaceObject: GameObject {
     Point velocity = {0, 0};
     float speed = 1;
     Path path;
+    bool isSeamless = true;
+    Color c = Color();
+
 
     SpaceObject() : path({}) {};
 
-    explicit SpaceObject(Path path) : path(std::move(path)) {};
+    explicit SpaceObject(Path path) : path(path) {};
 
     void Boost(float amount);
     virtual void Rotate(float degree);
 protected:
+
     void Draw() override;
     void Update(float dt) override;
 };
@@ -109,25 +113,22 @@ struct Spaceship: SpaceObject {
     explicit Spaceship(Path p): SpaceObject(p) {};
     void disableInvincibility() {
         isInvincible = false;
+        c = Color();
     }
 
 protected:
     bool isInvincible = false;
     float elapsedTime = 0;
-    Color c = Color();
-    void Draw() override;
     void Update(float dt) override;
 };
 
 struct Projectile: SpaceObject {
-    explicit Projectile(Path &path) : SpaceObject(path) {};
-
+    explicit Projectile(Path &path) : SpaceObject(path) {
+        isSeamless = false;
+    };
 protected:
     void Draw() override {
         r->drawBlob(position, 1);
-    }
-    void Update(float dt) override{
-        position = position.Translate(velocity.Scale(speed));
     }
 };
 
@@ -136,7 +137,7 @@ struct Asteroid: SpaceObject {
 
     explicit Asteroid(const Path &path) : SpaceObject(path) {};
 
-    explicit Asteroid(float radius, size_t quantity = 20);
+    explicit Asteroid(float radius, Point position, float speed, bool isSeamless);
 };
 
 #endif //GAME_GAMEOBJECT_H

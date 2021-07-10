@@ -10,8 +10,11 @@
 #include "SceneManager.h"
 #include "GameState.h"
 #include "GameFieldScene.h"
-#include "MenuScene.h"
 #include "MagicNumbers.h"
+#include "Geometry.h"
+
+
+
 
 
 void GameFieldScene::InitAsteroids(size_t quantity) {
@@ -25,14 +28,16 @@ void GameFieldScene::InitAsteroids(size_t quantity) {
     for (int i = 0; i < quantity; i++) {
         power = dist3(generator);
         radius =  std::pow(2, power);
-        asteroids.emplace_back(radius);
-        asteroids[i].position = Point(
-                dist2(generator) * r->width,
-                dist2(generator) * r->height
-        );
+        asteroids.emplace_back(
+                radius,
+                Point(
+                        dist2(generator) * r->width,
+                        dist2(generator) * r->height
+                ),
+                6 - power,
+                !isInfinite
+                );
         asteroids[i].setRasterizer(r);
-        asteroids[i].speed = 6 - power;
-
     }
 };
 
@@ -48,6 +53,7 @@ void GameFieldScene::Init() {
     player = Spaceship(path);
     startPoint = Point(r->width / 2, r->height / 2);
     player.position = startPoint;
+    player.isSeamless = true;
     player.setRasterizer(r);
     scoreText = ScoreText("", Point(10, 10), NORMAL_TEXT_SIZE, Color(),  2, false);
     livesText = LivesText("", Point(10, NORMAL_TEXT_SIZE + 20),
@@ -98,16 +104,38 @@ void GameFieldScene::Update(float dt) {
         invTimer = 0;
         player.disableInvincibility();
     }
-
+    bool notInsideScreen;
     for (auto it = projectiles.begin(); it != projectiles.end();) {
         Point p = it->position;
-        bool notInsideScreen = p.x > r->width || p.x < 0 || p.y > r->height || p.y < 0;
+        notInsideScreen = p.x > r->width || p.x < 0 || p.y > r->height || p.y < 0;
         if (notInsideScreen || DetectCollisions(p))
             projectiles.erase(it);
-        else {
-            ++it;
-        }
+        else ++it;
+
     }
+
+    int m = 100;
+
+    for (auto &a: asteroids) {
+        Point p = a.position;
+        notInsideScreen = p.x > (r->width + m) || p.x < -m || (p.y > r->height + m) || (p.y < -m);
+        if (notInsideScreen)
+            a.position = Point(
+                    frame2(p.x, -m, r->width + m),
+                    frame2(p.y, -m, r->height + m)
+                    );
+    }
+
+    asteroids.reserve(20);
+    while (asteroids.size() < 20) {
+        asteroids.emplace_back(32,Point(-10, -10),
+                1,!isInfinite);
+        asteroids[asteroids.size() - 1].setRasterizer(r);
+        asteroids[asteroids.size() - 1].c = Color(1, 0, 0);
+    }
+    asteroids.shrink_to_fit();
+
+
 
     if (is_key_pressed(VK_ESCAPE)){
         sceneManager.SetScene("Pause");
@@ -151,16 +179,19 @@ bool GameFieldScene::DetectCollisions(Point p) {
         if (Distance(it->position, p) <= it->radius) {
             GameState::score += it->radius;
             if (it->radius / 2 >= 8) {
-                Asteroid a1 = Asteroid(it->radius / 2);
-                Asteroid a2 = Asteroid(it->radius / 2);
-                a1.position = it->position.Translate(Point(it->radius / 2, 0));
-                a2.position = it->position.Translate(Point(-it->radius / 2, 0));
-                a1.speed = 6 - std::sqrt(it->radius);
-                a2.speed = 6 - std::sqrt(it->radius);
+                Asteroid a1 = Asteroid(
+                        it->radius / 2,
+                        it->position.Translate(Point(it->radius / 2, 0)),
+                        6 - std::sqrt(it->radius),
+                        !isInfinite);
+                Asteroid a2 = Asteroid(
+                        it->radius / 2,
+                        it->position.Translate(Point(it->radius / 2, 0)),
+                        6 - std::sqrt(it->radius),
+                        !isInfinite);
                 a1.setRasterizer(r); a2.setRasterizer(r);
                 as.erase(it);
-                as.push_back(a1);
-                as.push_back(a2);
+                as.insert(as.end(), {a1, a2});
             } else {
                 as.erase(it);
             }

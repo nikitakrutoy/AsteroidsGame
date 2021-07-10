@@ -4,9 +4,14 @@
 cmake_minimum_required(VERSION 3.17)
 
 set(CMAKE_CXX_STANDARD 14)
-project(game)
+project(asteroids)
 
-find_path(freetypePath freetype2 PATHS /usr/local/include NO_DEFAULT_PATH)
+if(APPLE)
+    find_path(freetypePath freetype2 PATHS /usr/local/include NO_DEFAULT_PATH)
+else()
+    find_path(freetypePath freetype2)
+endif()
+
 find_library(freetypeLib freetype)
 include_directories( ${freetypePath}/freetype2 )
 message(${freetypeLib})
@@ -24,6 +29,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 
 set(CMAKE_CONFIGURATION_TYPES "Debug" "Release")
 file(GLOB SRC src/*.cpp)
-add_executable(game ${SRC})
-target_link_libraries(game LINK_PUBLIC ${X11_LIBRARIES})
-target_link_libraries(game LINK_PUBLIC ${freetypeLib})
+add_executable(asteroids ${SRC})
+target_link_libraries(asteroids LINK_PUBLIC ${X11_LIBRARIES})
+target_link_libraries(asteroids LINK_PUBLIC ${freetypeLib})

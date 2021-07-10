@@ -23,6 +23,7 @@ private:
     uint32_t* buf;
     FT_Library ft;
     FT_Face face;
+    bool isSeamless = true;
 public:
     size_t height, width;
     Rasterizer(uint32_t *buffer, size_t height, size_t width);
@@ -36,5 +37,8 @@ public:
     void drawText(const std::string& text, Point position, float size = 24,
                   Color c = Color(), float space = 2, bool align = false);
 
+
+    void enableSeamless() { isSeamless = true; };
+    void disableSeamless() { isSeamless = false; };
 };
 #endif //GAME_RASTERIZER_H

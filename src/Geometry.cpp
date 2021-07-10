@@ -5,6 +5,22 @@
 #include "Geometry.h"
 #include <cmath>
 
+float frame(float x, int y)  {
+    float empty = 0;
+    return int(y + std::floor(x)) % y + std::modf(x, &empty);
+}
+
+float frame2(float x, int y_min, int y_max)  {
+    if (x < y_min) {
+        x = y_max - (y_min - x);
+    }
+    if (x > y_max) {
+        x = y_min + (x - y_max);
+    }
+    return x;
+}
+
+
 float Distance(Point p1, Point p2) {
     return std::sqrtf(std::powf((p1.x  - p2.x), 2) + std::powf((p1.y - p2.y), 2));
 }
