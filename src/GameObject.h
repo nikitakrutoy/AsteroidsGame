@@ -161,26 +161,24 @@ protected:
     };
 
     void Draw() override {
-        float x,y, nx, ny, v;
+        float x,y, w, h, v, d;
         float s = float(std::max(r->width, r->height));
+        w = r->width;
+        h = r->height;
         for (int i = 0; i < r->width; i++) {
             for (int j = 0; j < r->height; j++) {
-                x = (2 * i - int(r->width)) / s;
-                y = (2 * j - int(r->height)) / s;
-                for (int k = 1; k < complexity; k++) {
-                    x += elapsedTime * 0.001;
-                    y += elapsedTime * 0.001;
-                    nx = 0.4 / float(k) * std::sin(float(k) * y + elapsedTime / fluid_speed+0.8*float(k) + 23.0);
-                    ny = 2.0 / float(k) * std::sin(float(k) * x + elapsedTime / fluid_speed+0.3*float(k+10));
-                    x = nx;
-                    y = ny;
-                }
-                v = color_intensity*sin(x)+color_intensity;
+                x = float(i) / w;
+                y = float(j) / h;
+                d = Distance(Point(x, y), Point(0.5, 0.5));
+                v = customSin(y * h / 8) * customSin(x * w / 8) * customSin(y + elapsedTime);
                 Color c = Color(v, v, v);
                 r->setPixel(i, j, c);
             }
         }
     }
+
+private:
+    inline float customSin(float x) {return 0.5 * sin(x) + 0.5;};
 };
 
 
