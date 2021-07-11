@@ -4,25 +4,22 @@
 #include "MenuScene.h"
 #include "SceneManager.h"
 #include "GameState.h"
-#include "MagicNumbers.h"
-
-
-#define NANOSVG_IMPLEMENTATION	// Expands implementation
-#include "nanosvg.h"
+#include <filesystem>
+#include <unistd.h>
 
 
 SceneManager sceneManager;
 
-unsigned int GameState::lives = MAX_LIVES;
-unsigned int GameState::score = 0;
-std::string GameState::currentGameFieldSceneName = "";
-
 // initialize game data in this function
 void initialize()
 {
+    char b[1028];
+    std::cout << "Current path is " << getcwd(b, sizeof(b)) << std::endl;
+    GameState::setSavePath("../data");
+    GameState::Load();
     // Define Infinite Mode Scene and Levels Scenes
     std::shared_ptr<Scene> gameField = std::shared_ptr<Scene>(new GameFieldScene(20, true));
-    std::shared_ptr<Scene> level1 = std::shared_ptr<Scene>(new GameFieldScene(20, false, 3, 3));
+    std::shared_ptr<Scene> level1 = std::shared_ptr<Scene>(new GameFieldScene(1, false, 3, 3));
     std::shared_ptr<Scene> level2 = std::shared_ptr<Scene>(new GameFieldScene(30, false, 2, 1));
     std::shared_ptr<Scene> level3 = std::shared_ptr<Scene>(new GameFieldScene(40, false, 1, 0));
     std::shared_ptr<Scene> level4 = std::shared_ptr<Scene>(new GameFieldScene(50, false, 0, 0));

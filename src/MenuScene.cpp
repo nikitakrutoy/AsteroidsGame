@@ -113,12 +113,24 @@ void LevelsScene::Init() {
           new TextObject("", Point(500, r->height / 2 + 55),
                          NORMAL_TEXT_SIZE, Color(), 2, false),
           new TextObject("", Point(500, r->height / 2 + 90),
-                         NORMAL_TEXT_SIZE, Color(), 2, false)
-
+                         NORMAL_TEXT_SIZE, Color(), 2, false),
+          new TextObject("[completed]", position.Translate(Point(100, 100)),
+                         NORMAL_TEXT_SIZE, Color(), 2, false),
+          new TextObject("[completed]", position.Translate(Point(100, 135)),
+                         NORMAL_TEXT_SIZE, Color(), 2, false),
+          new TextObject("[completed]", position.Translate(Point(100, 170)),
+                         NORMAL_TEXT_SIZE, Color(), 2, false),
+          new TextObject("[completed]", position.Translate(Point(100, 205)),
+                         NORMAL_TEXT_SIZE, Color(), 2, false),
     });
+
+    for (auto it = labels.begin() + 5; it != labels.end(); it++) {
+        (*it)->enabled = false;
+    }
     descriptions = std::vector<std::string>({
         "Crybaby", "Midcore Gamer", "Osu! Lover", "Dark Souls Fan"
     });
+
     levelSpecs = std::vector<LevelSpec>(menuItems.size());
     for (int i = 0; i < menuItems.size() - 1; i++) {
         auto* s = dynamic_cast<SceneMenuItem*>(menuItems[i]);
@@ -136,6 +148,12 @@ void LevelsScene::Update(float dt) {
         labels[2]->text = "lives : " + std::to_string(levelSpecs[selectedMenuItem].lives);
         labels[3]->text = "invincibility : " + std::to_string(levelSpecs[selectedMenuItem].invTime);
         labels[4]->text = "asteroids : " + std::to_string(levelSpecs[selectedMenuItem].quantity);
+    }
+
+    for (auto& kv : levelName2LabelIndex) {
+        if (GameState::isLevelCompleted[kv.first]) {
+            labels[kv.second]->enabled = true;
+        }
     }
 
     MenuScene::Update(dt);

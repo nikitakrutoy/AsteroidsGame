@@ -18,6 +18,7 @@ struct GameObject {
     Point position = {0, 0};
     float scale = 1;
     Point forwardDirection = {1, 0};
+    bool enabled = true;
 
     std::shared_ptr<Rasterizer> r = nullptr;
 
@@ -25,6 +26,7 @@ struct GameObject {
         this->r = r;
     };
     void SafeDraw() {
+        if(!enabled) return;
         if (r) {
             Draw();
         } else {
@@ -33,6 +35,7 @@ struct GameObject {
     }
 
     void SafeUpdate(float dt) {
+        if(!enabled) return;
         if (r) {
             Update(dt);
         } else {

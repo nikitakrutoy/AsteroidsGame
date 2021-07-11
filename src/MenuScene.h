@@ -38,6 +38,10 @@ protected:
             m->Delete();
             delete m;
         }
+        for (auto& l : labels) {
+            l->Delete();
+            delete l;
+        }
     }
 
 protected:
@@ -62,6 +66,10 @@ struct LevelsScene: MenuScene {
 protected:
     std::vector<std::string> descriptions;
     std::vector<LevelSpec> levelSpecs;
+    std::map<std::string, size_t> levelName2LabelIndex = {
+            {"Level1", 5}, {"Level2", 6},
+            {"Level3", 7}, {"Level4", 8}
+    };
     void Update(float dt) override;
 };
 

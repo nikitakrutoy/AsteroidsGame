@@ -81,6 +81,14 @@ void GameFieldScene::Update(float dt) {
         return;
     }
 
+    if(!isInfinite and asteroids.empty()) {
+        sceneManager.SetScene("GameOver");
+        sceneManager.currentScene->Init();
+        GameState::isLevelCompleted[GameState::currentGameFieldSceneName] = true;
+        GameState::Save();
+        return;
+    }
+
     player.SafeUpdate(dt);
     for (auto &a : asteroids) a.SafeUpdate(dt);
     for (auto &p : projectiles) p.SafeUpdate(dt);

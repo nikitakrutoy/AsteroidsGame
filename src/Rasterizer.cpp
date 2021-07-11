@@ -38,7 +38,7 @@ Rasterizer::Rasterizer(uint32_t *buffer, size_t height, size_t width) : buf(buff
     {
         std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
     }
-    auto error = FT_New_Face(ft, "/Users/nikitakrutoy/CLionProjects/GameTemplateLinux/resources/fonts/Minecraft.ttf", 0, &face);
+    auto error = FT_New_Face(ft, "../resources/fonts/Minecraft.ttf", 0, &face);
     if (error)
     {
         if ( error == FT_Err_Unknown_File_Format )
