@@ -57,7 +57,12 @@ struct PauseScene: MenuScene {
 };
 
 struct TitleScene: MenuScene {
+    WaveBackground background;
     void Init() override;
+
+protected:
+    void Draw() override;
+    void Update(float dt) override;
 };
 
 struct LevelsScene: MenuScene {

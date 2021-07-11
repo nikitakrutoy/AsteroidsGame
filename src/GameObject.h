@@ -143,4 +143,45 @@ struct Asteroid: SpaceObject {
     explicit Asteroid(float radius, Point position, float speed, bool isSeamless);
 };
 
+
+struct WaveBackground: GameObject {
+    float elapsedTime = 0;
+    const int   complexity      = 10;    // More points of color.
+    const float fluid_speed     = 60.0;  // Drives speed, higher number will make it slower.
+    const float color_intensity = 0.5;
+    const float Pi = 3.14159;
+
+    WaveBackground() = default;
+
+    WaveBackground(const WaveBackground& bg) : GameObject(bg) {};
+
+protected:
+    void Update(float dt) override {
+        elapsedTime += dt;
+    };
+
+    void Draw() override {
+        float x,y, nx, ny, v;
+        float s = float(std::max(r->width, r->height));
+        for (int i = 0; i < r->width; i++) {
+            for (int j = 0; j < r->height; j++) {
+                x = (2 * i - int(r->width)) / s;
+                y = (2 * j - int(r->height)) / s;
+                for (int k = 1; k < complexity; k++) {
+                    x += elapsedTime * 0.001;
+                    y += elapsedTime * 0.001;
+                    nx = 0.4 / float(k) * std::sin(float(k) * y + elapsedTime / fluid_speed+0.8*float(k) + 23.0);
+                    ny = 2.0 / float(k) * std::sin(float(k) * x + elapsedTime / fluid_speed+0.3*float(k+10));
+                    x = nx;
+                    y = ny;
+                }
+                v = color_intensity*sin(x)+color_intensity;
+                Color c = Color(v, v, v);
+                r->setPixel(i, j, c);
+            }
+        }
+    }
+};
+
+
 #endif //GAME_GAMEOBJECT_H

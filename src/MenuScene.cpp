@@ -161,6 +161,7 @@ void LevelsScene::Update(float dt) {
 
 
 void TitleScene::Init() {
+    background.setRasterizer(r);
     position = Point(r->width / 2, TITLE_TEXT_SIZE / 2 + 10);
     Point center = Point(r->width / 2, r->height / 2 - 50);
     menuItems = std::vector<MenuItem*>({
@@ -176,4 +177,19 @@ void TitleScene::Init() {
           new TextObject("Asteroids", position, TITLE_TEXT_SIZE, Color(), 10, true),
     });
     MenuScene::Init();
+}
+
+void TitleScene::Draw() {
+    background.SafeDraw();
+    for (auto& m : menuItems) {
+        m->SafeDraw();
+    }
+    for (auto& l : labels) {
+        l->SafeDraw();
+    }
+}
+
+void TitleScene::Update(float dt) {
+    background.SafeUpdate(dt);
+    MenuScene::Update(dt);
 }
