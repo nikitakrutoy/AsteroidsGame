@@ -12,11 +12,6 @@ else()
     find_path(freetypePath freetype2)
 endif()
 
-find_library(freetypeLib freetype)
-include_directories( ${freetypePath}/freetype2 )
-message(${freetypeLib})
-message(${freetypePath})
-
 find_package( X11 REQUIRED )
 MESSAGE("X11 information:")
 MESSAGE("  X11_INCLUDE_DIR: ${X11_INCLUDE_DIR}")
@@ -29,6 +24,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 
 set(CMAKE_CONFIGURATION_TYPES "Debug" "Release")
 file(GLOB SRC src/*.cpp)
-add_executable(asteroids ${SRC})
+file(GLOB HDR src/*.h)
+
+add_executable(asteroids ${SRC} ${HDR})
+LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
 target_link_libraries(asteroids LINK_PUBLIC ${X11_LIBRARIES})
-target_link_libraries(asteroids LINK_PUBLIC ${freetypeLib})
+
+#add_executable(scratch scratch.cpp)
+#target_link_libraries(scratch libfreetype)
+

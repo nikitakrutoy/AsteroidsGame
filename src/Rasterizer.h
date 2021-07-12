@@ -7,6 +7,7 @@
 
 #include <ft2build.h>
 #include <freetype/freetype.h>
+#include <stb_truetype.h>
 #include "Geometry.h"
 
 struct Color {
@@ -23,7 +24,10 @@ private:
     uint32_t* buf;
     FT_Library ft;
     FT_Face face;
+    unsigned char* fontBuffer;
+    stbtt_fontinfo fontInfo;
     bool isSeamless = true;
+
 public:
     size_t height, width;
     Rasterizer(uint32_t *buffer, size_t height, size_t width);
@@ -32,7 +36,7 @@ public:
     void drawBlob(Point p, int size = 1, Color c = Color());
     void drawLine(Point p1, Point p2, Color c = Color());
     void drawPath(Path& p, Color c = Color());
-    void drawGlyph(FT_Bitmap& bm, Point position, Color c = Color());
+    void drawGlyph(unsigned char* b, int width, int height, Point position, Color color = Color());
     void drawChar(char ch, Point position, Color c = Color());
     void drawText(const std::string& text, Point position, float size = 24,
                   Color c = Color(), float space = 2, bool align = false);

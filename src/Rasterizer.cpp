@@ -6,8 +6,6 @@
 #ifndef GAME_RASTERIZER_CPP
 #define GAME_RASTERIZER_CPP
 
-#include <ft2build.h>
-#include <freetype/freetype.h>
 #include <cstdint>
 #include <iostream>
 #include <cmath>
@@ -15,6 +13,11 @@
 #include "Rasterizer.h"
 
 #include "MagicNumbers.h"
+
+#define STB_TRUETYPE_IMPLEMENTATION
+#include "stb_truetype.h" /* http://nothings.org/stb/stb_truetype.h */
+
+#include "Resources.h"
 
 
 uint32_t Color::ToUInt32() const {
@@ -34,21 +37,11 @@ Color Color::operator*(float v) const {
 
 
 Rasterizer::Rasterizer(uint32_t *buffer, size_t height, size_t width) : buf(buffer), height(height), width(width) {
-    if (FT_Init_FreeType(&ft))
+    fontBuffer = Minecraft_ttf;
+    /* prepare font */
+    if (!stbtt_InitFont(&fontInfo, fontBuffer, 0))
     {
-        std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
-    }
-    auto error = FT_New_Face(ft, "../resources/fonts/Minecraft.ttf", 0, &face);
-    if (error)
-    {
-        if ( error == FT_Err_Unknown_File_Format )
-        {
-            std::cout << "ERROR::FREETYPE: Wrong file format" << std::endl;
-        }
-        else if ( error )
-        {
-            std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
-        }
+        printf("failed\n");
     }
     isSeamless = true;
 };
@@ -132,26 +125,14 @@ void Rasterizer::drawPath(Path& p, Color c) {
         drawLine(p.data[i], p.data[0], c);
 }
 
-void Rasterizer::drawGlyph(FT_Bitmap& bm, Point position, Color color) {
-    for (int i = 0; i < bm.rows; i++) {
-        for (int j = 0; j < bm.width; j++) {
-            float r = bm.buffer[i * bm.width + j] / 255;
+void Rasterizer::drawGlyph(unsigned char* b, int width, int height, Point position, Color color) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            float r = b[i * width + j];
             Color c = color * r;
             setPixel(position.x + j, position.y + i, c);
-            ;
         }
     }
-}
-
-void Rasterizer::drawChar(char ch, Point position, Color color) {
-    FT_Set_Pixel_Sizes(face, 0, 48);
-    if (FT_Load_Char(face, ch, FT_LOAD_RENDER))
-    {
-        std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-    }
-    auto error = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
-    FT_Bitmap bm = face->glyph->bitmap;
-    drawGlyph(bm, position, color);
 }
 
 void Rasterizer::fillColor(Color c) {
@@ -162,7 +143,7 @@ void Rasterizer::fillColor(Color c) {
 
 
 void Rasterizer::drawText(const std::string& text, Point position, float size, Color c, float space, bool align) {
-    FT_Set_Pixel_Sizes(face, 0, size);
+    float scale = stbtt_ScaleForPixelHeight(&fontInfo, size);
     if (align) {
         int text_width = 0;
         for (char ch : text) {
@@ -170,28 +151,45 @@ void Rasterizer::drawText(const std::string& text, Point position, float size, C
                 text_width += space * SPACE_LENGTH;
                 continue;
             }
-
-            if (FT_Load_Char(face, ch, FT_LOAD_NO_BITMAP)) {
-                std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-            }
-            text_width += face->glyph->bitmap.width + space;
+            int c_x1, c_y1, c_x2, c_y2, w, h;
+            stbtt_GetCodepointBitmapBox(&fontInfo, ch, scale, scale, &c_x1, &c_y1, &c_x2, &c_y2);
+            w = (c_x2 - c_x1);
+            text_width += w;
         }
-        text_width -= space;
         position = position.Translate(Point(-text_width / 2, 0));
     }
 
-    for (char ch : text) {
-        if (FT_Load_Char(face, ch, FT_LOAD_RENDER))
-        {
-            std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-        }
-        FT_Bitmap bm = face->glyph->bitmap;
-        int bt = face->glyph->bitmap_top;
-        drawGlyph(bm, position.Translate(Point(0, (size-bt))), c);
-        position = position.Translate(Point(bm.width + space, 0));
+    int ascent, descent, lineGap;
+    stbtt_GetFontVMetrics(&fontInfo, &ascent, &descent, &lineGap);
+
+    ascent = roundf(ascent * scale);
+    descent = roundf(descent * scale);
+    unsigned char* bitmap = (unsigned char*) calloc(4 * size * size, sizeof(unsigned char));
+
+    for (int i = 0; i < text.size(); ++i) {
+        /* how wide is this character */
+        char ch = text[i];
+        int ax;
+        int lsb;
+        stbtt_GetCodepointHMetrics(&fontInfo, ch, &ax, &lsb);
+
+        /* get bounding box for character (may be offset to account for chars that dip above or below the line */
+        int c_x1, c_y1, c_x2, c_y2, w, h;
+        stbtt_GetCodepointBitmapBox(&fontInfo, ch, scale, scale, &c_x1, &c_y1, &c_x2, &c_y2);
+        w = (c_x2 - c_x1);
+        h = (c_y2 - c_y1);
+        /* compute y (different characters have different heights */
+        /* render character (stride and offset is important here) */
+        stbtt_MakeCodepointBitmap(&fontInfo, bitmap, w, h, w, scale, scale, ch);
+
+        drawGlyph(bitmap, w, h,  position.Translate(Point(0, ascent + c_y1)), c);
+        memset(bitmap, 0, 4 * size * size);
+
+        position = position.Translate(Point(roundf(ax * scale), 0));
         if (ch == char(32))
             position = position.Translate(Point(space * SPACE_LENGTH, 0));
     }
+    free(bitmap);
 }
 
 

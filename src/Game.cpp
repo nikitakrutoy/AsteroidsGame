@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 
+
 SceneManager sceneManager;
 
 // initialize game data in this function
