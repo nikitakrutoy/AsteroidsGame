@@ -49,7 +49,14 @@ protected:
 };
 
 struct GameOverScene: MenuScene {
+    Billboard im;
     void Init() override;
+
+protected:
+    void Draw() override {
+        MenuScene::Draw();
+        im.SafeDraw();
+    }
 };
 
 struct PauseScene: MenuScene {

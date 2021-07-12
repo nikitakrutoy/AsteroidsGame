@@ -3,13 +3,18 @@
 //
 
 
+
 #ifndef GAME_GAMEOBJECT_H
 #define GAME_GAMEOBJECT_H
+
 
 #include <iostream>
 #include "Rasterizer.h"
 #include "Geometry.h"
 #include "GameState.h"
+#include "Resources.h"
+
+
 
 
 struct GameObject {
@@ -141,6 +146,21 @@ struct Asteroid: SpaceObject {
     explicit Asteroid(const Path &path) : SpaceObject(path) {};
 
     explicit Asteroid(float radius, Point position, float speed, bool isSeamless);
+};
+
+struct Billboard: GameObject {
+    unsigned char* buf;
+    int width;
+    int height;
+    int comp;
+    Billboard() = default;
+
+    Billboard(unsigned char* b, size_t size);
+
+protected:
+    void Draw() override {
+        r->drawImage(buf, width, height, position);
+    }
 };
 
 #endif //GAME_GAMEOBJECT_H

@@ -6,7 +6,6 @@
 #define GAME_SCENEMANAGER_H
 
 
-#include <typeindex>
 #include <map>
 #include "Scene.h"
 #include "GameFieldScene.h"

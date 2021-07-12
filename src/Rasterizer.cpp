@@ -35,6 +35,14 @@ Color Color::operator*(float v) const {
             );
 }
 
+Color Color::FromUInt32(uint32_t a) {
+    uint8_t r, g, b;
+    r = a >> 16;
+    g = a >> 8;
+    b = a;
+    return Color(float(r) / 255.0f, float(g) / 255.0f, float(b) / 255.0f);
+}
+
 
 Rasterizer::Rasterizer(uint32_t *buffer, size_t height, size_t width) : buf(buffer), height(height), width(width) {
     fontBuffer = Minecraft_ttf;
@@ -55,7 +63,9 @@ void Rasterizer::setPixel(int x, int y, const Color &c)
     }
     if (x >= height || y >= width || x <= 0 || y <= 0) return;
 
-    buf[x * width + y] = c.ToUInt32();
+    buf[x * width + y] =Color::Blend(
+            Color::FromUInt32(buf[x * width + y]), c).ToUInt32();
+//    buf[x * width + y] = c.ToUInt32();
 }
 
 void Rasterizer::drawBlob(Point p, int size, Color c) {
@@ -151,10 +161,10 @@ void Rasterizer::drawText(const std::string& text, Point position, float size, C
                 text_width += space * SPACE_LENGTH;
                 continue;
             }
-            int c_x1, c_y1, c_x2, c_y2, w, h;
-            stbtt_GetCodepointBitmapBox(&fontInfo, ch, scale, scale, &c_x1, &c_y1, &c_x2, &c_y2);
-            w = (c_x2 - c_x1);
-            text_width += w;
+            int ax;
+            int lsb;
+            stbtt_GetCodepointHMetrics(&fontInfo, ch, &ax, &lsb);
+            text_width += roundf(ax * scale);
         }
         position = position.Translate(Point(-text_width / 2, 0));
     }
@@ -192,6 +202,18 @@ void Rasterizer::drawText(const std::string& text, Point position, float size, C
     free(bitmap);
 }
 
+void Rasterizer::drawImage(unsigned char *bf, size_t w, size_t h, Point p) {
+    Color c;
+    float r, g, b, a, v;
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; j++) {
+            v = float(bf[j * 2 * w + 2 * i]) / 255.0f;
+            a = float(bf[j * 2 * w + 2 * i + 1]);
+            c = Color(v, v, v, a);
+            setPixel(p.x + i, p.y + j, c);
+        }
+    }
+}
 
 
 #endif //GAME_RASTERIZER_CPP

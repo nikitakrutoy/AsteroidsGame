@@ -48,7 +48,7 @@ void initialize()
     sceneManager.AddScene("Level4", level4);
 
     // Init and set main menu screne
-    sceneManager.SetScene("MainMenu");
+    sceneManager.SetScene("GameOver");
     sceneManager.currentScene->Init();
 
 }

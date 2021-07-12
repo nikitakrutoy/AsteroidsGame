@@ -5,6 +5,7 @@
 #include "MenuScene.h"
 #include "GameState.h"
 #include "MagicNumbers.h"
+#include "Resources.h"
 
 void MenuScene::Draw() {
     r->fillColor();
@@ -44,6 +45,9 @@ void MenuScene::Update(float dt) {
 
 void GameOverScene::Init() {
     position = Point(r->width / 2, r->height / 2 - 80);
+    im = Billboard(pepe_outline_png, pepe_outline_png_len);
+    im.position = Point(0, r->height - im.height);
+    im.setRasterizer(r);
     menuItems = std::vector<MenuItem*>({
            new RetryMenuItem(
                    "Retry", true,

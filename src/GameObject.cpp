@@ -9,6 +9,9 @@
 #include "Geometry.h"
 #include "GameObject.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 void SpaceObject::Update(float dt) {
     position = position.Translate(velocity.Scale(speed));
     if (isSeamless)
@@ -79,3 +82,7 @@ Asteroid::Asteroid(float radius, Point p, float s, bool seamless) {
 }
 
 #endif //GAME_GAMEOBJECT_CPP
+
+Billboard::Billboard(unsigned char *b, size_t size) {
+    buf = stbi_load_from_memory(b, size, &width, &height, &comp, STBI_grey_alpha);
+}
