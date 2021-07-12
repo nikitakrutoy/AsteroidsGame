@@ -4,6 +4,7 @@
 #include "MenuScene.h"
 #include "SceneManager.h"
 #include "GameState.h"
+#include "BackgroundScene.h"
 #include <filesystem>
 #include <unistd.h>
 
@@ -18,6 +19,10 @@ void initialize()
     std::cout << "Current path is " << getcwd(b, sizeof(b)) << std::endl;
     GameState::setSavePath("../data");
     GameState::Load();
+
+
+    std::shared_ptr<Scene> background = std::shared_ptr<Scene>(new BackgroundScene());
+
     // Define Infinite Mode Scene and Levels Scenes
     std::shared_ptr<Scene> gameField = std::shared_ptr<Scene>(new GameFieldScene(20, true));
     std::shared_ptr<Scene> level1 = std::shared_ptr<Scene>(new GameFieldScene(1, false, 3, 3));
@@ -37,6 +42,7 @@ void initialize()
     sceneManager.SetRasterizer(rasterizer);
 
     // Add defined scenes to scene manager
+    sceneManager.AddScene("Background", background);
     sceneManager.AddScene("GameField", gameField);
     sceneManager.AddScene("GameOver", gameOverMenu);
     sceneManager.AddScene("Pause", pauseMenu);
@@ -48,7 +54,7 @@ void initialize()
     sceneManager.AddScene("Level4", level4);
 
     // Init and set main menu screne
-    sceneManager.SetScene("GameOver");
+    sceneManager.SetScene("GameField");
     sceneManager.currentScene->Init();
 
 }

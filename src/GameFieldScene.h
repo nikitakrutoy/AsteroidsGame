@@ -7,10 +7,12 @@
 
 #include "Scene.h"
 #include "LevelSpec.h"
+#include "BackgroundScene.h"
 
 
 struct GameFieldScene: Scene {
 private:
+    BackgroundScene background;
     void InitAsteroids(size_t quantity);
     bool wasSpacePressed = false;
     bool isInfinite = false;

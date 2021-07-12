@@ -11,6 +11,9 @@
 
 float frame(float x, int y);
 float frame2(float x, int y_min, int y_max);
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
 
 struct Point {
     float x, y;

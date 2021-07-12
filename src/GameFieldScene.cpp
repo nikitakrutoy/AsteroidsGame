@@ -17,7 +17,7 @@ void GameFieldScene::InitAsteroids(size_t quantity) {
     std::random_device rand_dev;
     std::mt19937 generator(rand_dev());
     std::uniform_real_distribution<float>  dist2(0, 1);
-    std::uniform_int_distribution<float>  dist3(3, 5);
+    std::uniform_int_distribution<int>  dist3(3, 5);
     asteroids.reserve(quantity);
     float radius;
     int power;
@@ -51,6 +51,10 @@ void GameFieldScene::Init() {
     player.position = startPoint;
     player.isSeamless = true;
     player.setRasterizer(r);
+
+    background.setRasterizer(r);
+    background.Init();
+
     scoreText = ScoreText("", Point(10, 10), NORMAL_TEXT_SIZE, Color(),  2, false);
     livesText = LivesText("", Point(10, NORMAL_TEXT_SIZE + 20),
                                     NORMAL_TEXT_SIZE, Color(),  2, false);
@@ -65,8 +69,9 @@ void GameFieldScene::Init() {
 };
 
 void GameFieldScene::Draw()  {
-    Color backgroundColor = Color(0.0f,0.0f,0.0f);
-    r->fillColor(backgroundColor);
+//    Color backgroundColor = Color(0.0f,0.0f,0.0f);
+//    r->fillColor(backgroundColor);
+    background.SafeDraw();
     player.SafeDraw();
     for (auto &a : asteroids) a.SafeDraw();
     for (auto &p : projectiles) p.SafeDraw();
@@ -75,6 +80,7 @@ void GameFieldScene::Draw()  {
 }
 
 void GameFieldScene::Update(float dt) {
+    background.SafeUpdate(dt);
     if (GameState::lives <= 0) {
         sceneManager.SetScene("GameOver");
         sceneManager.currentScene->Init();

@@ -163,4 +163,67 @@ protected:
     }
 };
 
+struct BackgroundObjcet : SpaceObject {
+    int size;
+    float elapsedTime = 0;
+    float maxBrightness = 0.1;
+    float minBrightness = 0.01;
+    float blinkSpeed = 0.5;
+    float offset = 0;
+
+    void Update(float dt) override{
+        elapsedTime += dt;
+        float br = (0.5f * sinf((elapsedTime * blinkSpeed + offset) * 1) + 0.5f) * (maxBrightness - minBrightness) + minBrightness;
+        c = Color(br, br, br);
+        SpaceObject::Update(dt);
+    }
+};
+
+
+struct Planet: BackgroundObjcet {
+protected:
+    void Draw() override{
+        int i1,i2;
+        r->enableSeamless();
+        for (int x = -size; x < size + 1; x++) {
+            i1 = size * sin(acos(float(x) / size));
+            i2 = -i1;
+            if (i2 < i1) std::swap(i1, i2);
+            for (int y = i1; y < i2 + 1; y++) {
+                r->setPixel(position.x + x, position.y + y, c);
+            }
+        }
+        r->disableSeamless();
+    }
+};
+
+struct Star: BackgroundObjcet {
+    float fsize;
+protected:
+    void Draw() override{
+        int i1,i2;
+        r->enableSeamless();
+        for (int x = -fsize; x < fsize + 1; x++) {
+            if (x == 0)
+                i1 = fsize + 1;
+            else
+                i1 = std::floor(abs(1 / float(x) * size)) * sgn(x);
+            i2 = -i1;
+            if (i2 < i1) std::swap(i1, i2);
+            for (int y = i1; y < i2 + 1; y++) {
+                r->setPixel(position.x + x, position.y + y, c);
+            }
+        }
+        r->setPixel(position.x - size -1, position.y, c);
+        r->setPixel(position.x + size + 1, position.y, c);
+        r->disableSeamless();
+    }
+
+protected:
+    void Update(float dt) override {
+        fsize = size + 10 *  (0.5 * sinf((elapsedTime * blinkSpeed + offset)) + 0.5);
+        BackgroundObjcet::Update(dt);
+    }
+};
+
 #endif //GAME_GAMEOBJECT_H
