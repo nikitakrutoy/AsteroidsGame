@@ -217,7 +217,7 @@ void Rasterizer::drawText(const std::string& text, Point position, float size, f
 
 void Rasterizer::drawImage(unsigned char *bf, size_t w, size_t h, Point p) {
     Color c;
-    float r, g, b, a, v;
+    float a, v;
     for (int i = 0; i < w; i++) {
         for (int j = 0; j < h; j++) {
             v = float(bf[j * 2 * w + 2 * i]) / 255.0f;

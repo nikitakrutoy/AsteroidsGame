@@ -172,9 +172,6 @@ void GameFieldScene::Update(float dt) {
 
     if (!is_key_pressed(VK_SPACE) && wasSpacePressed) {
         Path empty = Path({});
-        auto& a = typeid(asteroids);
-        const std::type_info& ti1 = typeid(asteroids);
-        const std::type_info& ti2 = typeid(asteroids);
         Projectile projectile = Projectile(empty);
         projectile.velocity = player.forwardDirection.Scale(5);
         projectile.position = player.position;

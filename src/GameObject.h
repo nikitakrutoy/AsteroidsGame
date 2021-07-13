@@ -13,6 +13,7 @@
 #include "Geometry.h"
 #include "GameState.h"
 #include "Resources.h"
+#include <memory>
 
 
 
@@ -166,7 +167,7 @@ protected:
     }
 };
 
-struct BackgroundObjcet : SpaceObject {
+struct BackgroundObject : SpaceObject {
     int size;
     float elapsedTime = 0;
     float maxBrightness = 0.1;
@@ -184,7 +185,7 @@ struct BackgroundObjcet : SpaceObject {
 };
 
 
-struct Planet: BackgroundObjcet {
+struct Planet: BackgroundObject {
 protected:
     void Draw() override{
         int i1,i2;
@@ -201,7 +202,7 @@ protected:
     }
 };
 
-struct Star: BackgroundObjcet {
+struct Star: BackgroundObject {
     float fsize;
 protected:
     void Draw() override{
@@ -226,7 +227,7 @@ protected:
 protected:
     void Update(float dt) override {
         fsize = size + 10 *  (0.5 * sinf((elapsedTime * blinkSpeed + offset)) + 0.5);
-        BackgroundObjcet::Update(dt);
+        BackgroundObject::Update(dt);
     }
 };
 

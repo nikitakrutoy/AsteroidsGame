@@ -55,7 +55,6 @@ public:
     std::string GetGameSceneName() {return gameSceneName;}
 private:
     bool enterWasPressed = false;
-    bool doReset = false;
 protected:
     std::string bgSceneName;
     std::string gameSceneName;

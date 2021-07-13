@@ -25,7 +25,7 @@ void initialize()
     // Define Infinite Mode Scene and Levels Scenes
     std::shared_ptr<Scene> gameField = std::shared_ptr<Scene>(new GameFieldScene(20, true));
     std::shared_ptr<Scene> level1 = std::shared_ptr<Scene>(new GameFieldScene(1, false, 3, 3));
-    std::shared_ptr<Scene> level2 = std::shared_ptr<Scene>(new GameFieldScene(30, false, 2, 1));
+    std::shared_ptr<Scene> level2 = std::shared_ptr<Scene>(new GameFieldScene(30, false, 3, 2));
     std::shared_ptr<Scene> level3 = std::shared_ptr<Scene>(new GameFieldScene(40, false, 1, 0));
     std::shared_ptr<Scene> level4 = std::shared_ptr<Scene>(new GameFieldScene(50, false, 0, 0));
 
