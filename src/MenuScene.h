@@ -20,29 +20,16 @@ private:
 
 public:
     MenuScene() = default;
-    virtual void Init() override {
-        for (auto& m : menuItems) m->setRasterizer(r);
-        for (auto& l : labels) l->setRasterizer(r);
-        menuItems[selectedMenuItem]->isSelected = true;
-    };
+    virtual void Init() override;
 
 
 protected:
     size_t selectedMenuItem = 0;
     std::vector<MenuItem*> menuItems;
     std::vector<TextObject*> labels;
+    void Delete() override;
+protected:
     void Update(float dt) override;
-
-    void Delete() override {
-        for (auto& m : menuItems) {
-            m->Delete();
-            delete m;
-        }
-        for (auto& l : labels) {
-            l->Delete();
-            delete l;
-        }
-    }
     void Draw() override;
 };
 

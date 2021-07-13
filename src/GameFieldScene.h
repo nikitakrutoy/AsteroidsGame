@@ -15,9 +15,9 @@ private:
     void InitAsteroids(size_t quantity);
     bool wasSpacePressed = false;
     bool isInfinite = false;
-    size_t quantity = 10;
-    size_t lives = 3;
-    time_t invTime = 3;
+    const size_t quantity = 10;
+    const size_t lives = 3;
+    const time_t invTime = 3;
     time_t invTimer = 0;
 
     Spaceship player{};
@@ -35,8 +35,8 @@ public:
                    size_t lives = 3, time_t invincibilityTime = 3):
             quantity(quantity), isInfinite(isInfinite),
             lives(lives), invTime(invincibilityTime) {};
-    void setRasterizer(std::shared_ptr<Rasterizer> r) override;
-    LevelSpec GetSpec() {return LevelSpec(lives, invTime, quantity);}
+    void SetRasterizer(std::shared_ptr<Rasterizer> r) override;
+    LevelSpec GetSpec() const {return LevelSpec(lives, invTime, quantity);}
     void Init() override;
     void Update(float dt) override;
     void Delete() override;

@@ -29,48 +29,16 @@ public:
 
     void AddScene(std::string name, std::shared_ptr<Scene>& s);
 
-    void SetBackgroundScene(std::string name) {
-        if (name == currentBackgroundSceneName) return;
-        currentBackgroundScene = scenes[name];
-        currentBackgroundSceneName = name;
-        currentBackgroundScene->setRasterizer(rasterizer);
-        currentBackgroundScene->Init();
-    }
-    void SetUIScene(std::string name) {
-        if (name == currentUISceneName) return;
-        currentUIScene = scenes[name];
-        currentUISceneName = name;
-        currentUIScene->setRasterizer(rasterizer);
-        currentUIScene->Init();
-    }
+    bool SetBackgroundScene(std::string name);
+    bool SetGameScene(std::string name);
+    bool SetUIScene(std::string name);
 
-    void SetGameScene(std::string name) {
-        if (name == currentGameSceneName) return;
-        currentGameScene = scenes[name];
-        currentGameScene->setRasterizer(rasterizer);
-        lastGameSceneName = name;
-        currentGameSceneName = name;
-        currentGameScene->Init();
 
-    }
-    void UnsetBackgroundScene() {
-        currentBackgroundScene = nullptr;
-        currentBackgroundSceneName = "";
-    }
+    void UnsetBackgroundScene();
+    void UnsetUIScene();
+    void UnsetGameScene();
 
-    void UnsetUIScene() {
-        currentUIScene = nullptr;
-        currentUISceneName = "";
-    }
-
-    void UnsetGameScene() {
-        currentGameScene = nullptr;
-        currentGameSceneName = "";
-    }
-
-    std::shared_ptr<Scene> GetScene(std::string name) {
-        return scenes[name];
-    }
+    std::shared_ptr<Scene> GetScene(std::string name) {return scenes[name];}
 
     void SetRasterizer(std::shared_ptr<Rasterizer> r);
 

@@ -11,10 +11,9 @@
 #include "GameState.h"
 #include "MagicNumbers.h"
 
-unsigned int GameState::lives = MAX_LIVES;
+unsigned int GameState::lives = 3;
 unsigned int GameState::score = 0;
-std::string GameState::savePath = "../data";
-std::string GameState::currentGameFieldSceneName{};
+std::string GameState::savePath = "/tmp";
 std::map<std::string, bool> GameState::isLevelCompleted = {};
 
 void GameState::setSavePath(std::string path) {

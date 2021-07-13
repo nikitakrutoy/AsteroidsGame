@@ -44,6 +44,15 @@ Color Color::FromUInt32(uint32_t a) {
     return Color(float(r) / 255.0f, float(g) / 255.0f, float(b) / 255.0f);
 }
 
+Color Color::Blend(Color c1, Color c2) {
+    return Color(
+            (1.0f - c2.A) * c1.R + c2.A * c2.R,
+            (1.0f - c2.A) * c1.G + c2.A * c2.G,
+            (1.0f - c2.A) * c1.B + c2.A * c2.B,
+            1
+    );
+}
+
 
 Rasterizer::Rasterizer(uint32_t *buffer, size_t height, size_t width) : buf(buffer), height(height), width(width) {
     fontBuffer = Minecraft_ttf;
@@ -215,7 +224,7 @@ void Rasterizer::drawText(const std::string& text, Point position, float size, f
     free(bitmap);
 }
 
-void Rasterizer::drawImage(unsigned char *bf, size_t w, size_t h, Point p) {
+void Rasterizer::drawImage(const unsigned char *bf, const size_t w, const size_t h, Point p) {
     Color c;
     float a, v;
     for (int i = 0; i < w; i++) {

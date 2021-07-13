@@ -1,12 +1,9 @@
 #include "Engine.h"
-#include <algorithm>
 #include "GameFieldScene.h"
 #include "MenuScene.h"
 #include "SceneManager.h"
 #include "GameState.h"
 #include "BackgroundScene.h"
-#include <filesystem>
-#include <unistd.h>
 
 
 
@@ -19,14 +16,16 @@ void initialize()
     GameState::Load();
 
     std::shared_ptr<Scene> solidBackground = std::shared_ptr<Scene>(new SolidBackgroundScene());
-    std::shared_ptr<Scene> spaceBackgroundDark = std::shared_ptr<Scene>(new SpaceBackgroundScene(0.1, 0.2));
-    std::shared_ptr<Scene> spaceBackgroundLight = std::shared_ptr<Scene>(new SpaceBackgroundScene(0.1, 0.3));
+    std::shared_ptr<Scene> spaceBackgroundDark = std::shared_ptr<Scene>(new SpaceBackgroundScene(
+            DARK_BACKGROUND_MIN_BR, DARK_BACKGROUND_MAX_BR));
+    std::shared_ptr<Scene> spaceBackgroundLight = std::shared_ptr<Scene>(new SpaceBackgroundScene(
+            LIGHT_BACKGROUND_MIN_BR, LIGHT_BACKGROUND_MAX_BR));
 
     // Define Infinite Mode Scene and Levels Scenes
     std::shared_ptr<Scene> gameField = std::shared_ptr<Scene>(new GameFieldScene(20, true));
     std::shared_ptr<Scene> level1 = std::shared_ptr<Scene>(new GameFieldScene(1, false, 3, 3));
     std::shared_ptr<Scene> level2 = std::shared_ptr<Scene>(new GameFieldScene(30, false, 3, 2));
-    std::shared_ptr<Scene> level3 = std::shared_ptr<Scene>(new GameFieldScene(40, false, 1, 0));
+    std::shared_ptr<Scene> level3 = std::shared_ptr<Scene>(new GameFieldScene(40, false, 2, 0));
     std::shared_ptr<Scene> level4 = std::shared_ptr<Scene>(new GameFieldScene(50, false, 0, 0));
 
     // Define menu scenes

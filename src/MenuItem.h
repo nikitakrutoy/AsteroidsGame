@@ -15,20 +15,11 @@ struct MenuItem: GameObject {
     std::string text;
     bool isSelected = false;
     bool align = true;
+    Color c = Color();
     MenuItem(std::string text, Point p, bool align = true);
 protected:
-    void Draw() override{
-        Color c = Color();
-        if (isSelected) {
-            float v = std::round((0.5 * std::sin(elapsedTime * 10) + 0.5));
-            c = c * v;
-            c.A = v;
-        }
-        r->drawText(text, position, NORMAL_TEXT_SIZE, 0, c, 2, align);
-    }
-    void Update(float dt) override{
-        elapsedTime += dt;
-    }
+    void Draw() override;
+    void Update(float dt) override { elapsedTime += dt; }
 private:
     float elapsedTime = 0;
 };
@@ -37,12 +28,7 @@ struct ExitMenuItem: MenuItem {
     ExitMenuItem(std::string text, Point p): MenuItem(text, p){};
 
 protected:
-    void Update(float dt) override {
-        MenuItem::Update(dt);
-        if (is_key_pressed(VK_RETURN) && isSelected) {
-            schedule_quit_game();
-        }
-    }
+    void Update(float dt)  override;
 };
 
 
@@ -59,28 +45,9 @@ protected:
     std::string bgSceneName;
     std::string gameSceneName;
     std::string uiSceneName;
-    void Update(float dt) override{
-        MenuItem::Update(dt);
-        if (is_key_pressed(VK_RETURN) && !enterWasPressed) {
-            enterWasPressed = true;
-        }
-
-        if (!is_key_pressed(VK_RETURN) && enterWasPressed && isSelected) {
-            SetScene();
-            enterWasPressed = false;
-        }
-    }
+    void Update(float dt) ;
 protected:
-    virtual void SetScene() {
-        if (!bgSceneName.empty()) sceneManager.SetBackgroundScene(bgSceneName);
-        else sceneManager.UnsetBackgroundScene();
-
-        if (!gameSceneName.empty()) sceneManager.SetGameScene(gameSceneName);
-        else sceneManager.UnsetGameScene();
-
-        if (!uiSceneName.empty()) sceneManager.SetUIScene(uiSceneName);
-        else sceneManager.UnsetUIScene();
-    }
+    virtual void SetScene();
 };
 
 
@@ -88,26 +55,15 @@ struct ContinueMenuItem: SceneMenuItem {
     ContinueMenuItem(std::string text,std::string background, Point p, bool align = true):
         SceneMenuItem(text, background, "", "",  p, align) {};
 protected:
-    void Update(float dt) override {
-        gameSceneName = sceneManager.lastGameSceneName;
-        SceneMenuItem::Update(dt);
-    }
-
-    void SetScene() override {
-        SceneMenuItem::SetScene();
-        sceneManager.currentGameScene->doUpdate = true;
-    }
+    void Update(float dt) override;
+    void SetScene() override ;
 };
 
 struct RetryMenuItem: ContinueMenuItem {
     RetryMenuItem(std::string text, std::string background, Point p, bool align = true):
             ContinueMenuItem(text, background, p, align) {};
 protected:
-
-    void SetScene() override {
-        ContinueMenuItem::SetScene();
-        sceneManager.currentGameScene->Init();
-    }
+    void SetScene() override;
 };
 
 #endif //GAME_MENUITEM_H

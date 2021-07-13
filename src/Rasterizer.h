@@ -14,13 +14,7 @@ struct Color {
             R(r), G(g), B(b), A(a) {};
     uint32_t ToUInt32() const;
     static Color FromUInt32(uint32_t a);
-    static Color Blend(Color c1, Color c2) {
-        return Color(
-                (1.0f - c2.A) * c1.R + c2.A * c2.R,
-                (1.0f - c2.A) * c1.G + c2.A * c2.G,
-                (1.0f - c2.A) * c1.B + c2.A * c2.B,
-                1);
-    }
+    static Color Blend(Color c1, Color c2);
 
     Color operator*(float v) const;
 };
@@ -44,7 +38,7 @@ public:
                    Color color = Color());
     void drawText(const std::string& text, Point position, float size = 24, float angle = 0,
                   Color c = Color(), float space = 2, bool align = false);
-    void drawImage(unsigned char* bf, size_t width, size_t height, Point p);
+    void drawImage(const unsigned char *bf, const size_t w, const size_t h, Point p);
 
 
     void enableSeamless() { isSeamless = true; };

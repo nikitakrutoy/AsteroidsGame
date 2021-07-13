@@ -13,16 +13,17 @@
 #include "MagicNumbers.h"
 #include "Geometry.h"
 
+static std::random_device rand_dev;
+static std::mt19937 generator(rand_dev());
+static std::uniform_real_distribution<float>  dist2(0, 1);
+
+
 void GameFieldScene::InitAsteroids(size_t quantity) {
-    std::random_device rand_dev;
-    std::mt19937 generator(rand_dev());
-    std::uniform_real_distribution<float>  dist2(0, 1);
-    std::uniform_int_distribution<int>  dist3(3, 5);
     asteroids.reserve(quantity);
     float radius;
     int power;
     for (int i = 0; i < quantity; i++) {
-        power = dist3(generator);
+        power = (MAX_ASTEROIDS_SIZE - 3) * dist2(generator) + 3;
         radius =  std::pow(2, power);
         asteroids.emplace_back(
                 radius,
@@ -30,39 +31,41 @@ void GameFieldScene::InitAsteroids(size_t quantity) {
                         dist2(generator) * r->width,
                         dist2(generator) * r->height
                 ),
-                6 - power,
+                MAX_ASTEROIDS_SIZE - power,
                 !isInfinite
                 );
-        asteroids[i].setRasterizer(r);
+        asteroids[i].SetRasterizer(r);
     }
 };
 
-void GameFieldScene::setRasterizer(std::shared_ptr<Rasterizer> r)  {
+void GameFieldScene::SetRasterizer(std::shared_ptr<Rasterizer> r)  {
     this->r = r;
 
-    player.setRasterizer(r);
-    for (auto &a : asteroids) a.setRasterizer(r);
-    for (auto &p : projectiles) p.setRasterizer(r);
+    player.SetRasterizer(r);
+    for (auto &a : asteroids) a.SetRasterizer(r);
+    for (auto &p : projectiles) p.SetRasterizer(r);
 }
 void GameFieldScene::Init() {
-    Path path = Path({Point(-25, -15), Point(30, 0), Point(-25, 15), Point(-10, 0)});
+    Path path = Path({
+        Point(-25, -15), Point(30, 0), Point(-25, 15), Point(-10, 0)});
     player = Spaceship(path);
     startPoint = Point(r->width / 2, r->height / 2);
     player.position = startPoint;
     player.isSeamless = true;
-    player.setRasterizer(r);
+    player.SetRasterizer(r);
 
     doUpdate = true;
     doDraw = true;
     enabled = true;
 
 
-    scoreText = ScoreText("", Point(10, 10), NORMAL_TEXT_SIZE, Color(),  2, false);
+    scoreText = ScoreText("", Point(10, 10),
+                          NORMAL_TEXT_SIZE, Color(),  2, false);
     livesText = LivesText("", Point(10, NORMAL_TEXT_SIZE + 20),
-                                    NORMAL_TEXT_SIZE, Color(),  2, false);
+                          NORMAL_TEXT_SIZE, Color(),  2, false);
 
-    scoreText.setRasterizer(r);
-    livesText.setRasterizer(r);
+    scoreText.SetRasterizer(r);
+    livesText.SetRasterizer(r);
     GameState::lives = lives;
     GameState::score = 0;
     asteroids.clear();
@@ -71,8 +74,6 @@ void GameFieldScene::Init() {
 };
 
 void GameFieldScene::Draw()  {
-//    Color backgroundColor = Color(0.0f,0.0f,0.0f);
-//    r->fillColor(backgroundColor);
     player.SafeDraw();
     for (auto &a : asteroids) a.SafeDraw();
     for (auto &p : projectiles) p.SafeDraw();
@@ -142,10 +143,13 @@ void GameFieldScene::Update(float dt) {
         }
 
         asteroids.reserve(20);
+        float radius, power;
         while (asteroids.size() < 20) {
-            asteroids.emplace_back(32,Point(-10, -10),
+            power = (MAX_ASTEROIDS_SIZE - 3) * dist2(generator) + 3;
+            radius =  std::pow(2, power);
+            asteroids.emplace_back(radius,Point(-10, -10),
                                    1,!isInfinite);
-            asteroids[asteroids.size() - 1].setRasterizer(r);
+            asteroids[asteroids.size() - 1].SetRasterizer(r);
             asteroids[asteroids.size() - 1].c = Color(1, 0, 0);
         }
         asteroids.shrink_to_fit();
@@ -175,7 +179,7 @@ void GameFieldScene::Update(float dt) {
         Projectile projectile = Projectile(empty);
         projectile.velocity = player.forwardDirection.Scale(5);
         projectile.position = player.position;
-        projectile.setRasterizer(r);
+        projectile.SetRasterizer(r);
         projectiles.push_back(projectile);
         wasSpacePressed = false;
     }
@@ -193,14 +197,15 @@ bool GameFieldScene::DetectCollisions(Point p) {
                 Asteroid a1 = Asteroid(
                         it->radius / 2,
                         it->position.Translate(Point(it->radius / 2, 0)),
-                        6 - std::sqrt(it->radius),
+                        6 - std::log(it->radius),
                         !isInfinite);
                 Asteroid a2 = Asteroid(
                         it->radius / 2,
                         it->position.Translate(Point(it->radius / 2, 0)),
-                        6 - std::sqrt(it->radius),
+                        6 - std::log(it->radius),
                         !isInfinite);
-                a1.setRasterizer(r); a2.setRasterizer(r);
+                a1.SetRasterizer(r);
+                a2.SetRasterizer(r);
                 as.erase(it);
                 as.insert(as.end(), {a1, a2});
             } else {

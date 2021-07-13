@@ -30,26 +30,11 @@ struct GameObject {
 
     std::shared_ptr<Rasterizer> r = nullptr;
 
-    virtual void setRasterizer(std::shared_ptr<Rasterizer> r) {
+    virtual void SetRasterizer(std::shared_ptr<Rasterizer> r) {
         this->r = r;
     };
-    void SafeDraw() {
-        if(!(enabled && doDraw)) return;
-        if (r) {
-            Draw();
-        } else {
-            std::cout << "No Rasterizer" << std::endl;
-        }
-    }
-
-    void SafeUpdate(float dt) {
-        if(!(enabled && doUpdate)) return;
-        if (r) {
-            Update(dt);
-        } else {
-            std::cout << "No Rasterizer" << std::endl;
-        }
-    }
+    void SafeDraw() ;
+    void SafeUpdate(float dt);
 
     virtual void Delete() {
         r.reset();
@@ -63,7 +48,7 @@ protected:
 struct TextObject: GameObject {
     std::string text;
     float size;
-    Color c;
+    Color c = Color();
     size_t spacing;
     float rotation = 0;
     bool align;
@@ -153,7 +138,7 @@ struct Asteroid: SpaceObject {
 };
 
 struct Billboard: GameObject {
-    unsigned char* buf;
+    const unsigned char* buf;
     int width;
     int height;
     int comp;
@@ -176,53 +161,20 @@ struct BackgroundObject : SpaceObject {
     float offset = 0;
     Color c = Color(0,0,0,0);
 
-    void Update(float dt) override{
-        elapsedTime += dt;
-        float br = (0.5f * sinf((elapsedTime * blinkSpeed + offset) * 1) + 0.5f) * (maxBrightness - minBrightness) + minBrightness;
-        c = Color(br, br, br);
-        SpaceObject::Update(dt);
-    }
+protected:
+    void Update(float dt) override;
 };
 
 
 struct Planet: BackgroundObject {
 protected:
-    void Draw() override{
-        int i1,i2;
-        r->enableSeamless();
-        for (int x = -size; x < size + 1; x++) {
-            i1 = size * sin(acos(float(x) / size));
-            i2 = -i1;
-            if (i2 < i1) std::swap(i1, i2);
-            for (int y = i1; y < i2 + 1; y++) {
-                r->setPixel(position.x + x, position.y + y, c);
-            }
-        }
-        r->disableSeamless();
-    }
+    void Draw() override;
 };
 
 struct Star: BackgroundObject {
     float fsize;
 protected:
-    void Draw() override{
-        int i1,i2;
-        r->enableSeamless();
-        for (int x = -fsize; x < fsize + 1; x++) {
-            if (x == 0)
-                i1 = fsize + 1;
-            else
-                i1 = std::floor(std::abs(1 / float(x) * size)) * sgn(x);
-            i2 = -i1;
-            if (i2 < i1) std::swap(i1, i2);
-            for (int y = i1; y < i2 + 1; y++) {
-                r->setPixel(position.x + x, position.y + y, c);
-            }
-        }
-        r->setPixel(position.x - size -1, position.y, c);
-        r->setPixel(position.x + size + 1, position.y, c);
-        r->disableSeamless();
-    }
+    void Draw() override;
 
 protected:
     void Update(float dt) override {

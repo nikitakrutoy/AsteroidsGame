@@ -8,10 +8,6 @@
 #define GAME_RESOURCES_CPP
 
 #include "Resources.h"
-//extern  unsigned char Minecraft_ttf[];
-//extern  unsigned int Minecraft_ttf_len;
-//extern  unsigned char pepe_outline_png[];
-//extern  unsigned int pepe_outline_png_len;
 
 unsigned char Minecraft_ttf[] = {
         0x00, 0x01, 0x00, 0x00, 0x00, 0x0e, 0x00, 0x80, 0x00, 0x03, 0x00, 0x60,

@@ -19,53 +19,16 @@ protected:
 
 
 struct SpaceBackgroundScene: Scene {
-    std::vector<Star> stars;
-    std::vector<Planet> planets;
-    float minBrightness = 0.01, maxBrightness = 0.1;
-
+public:
     SpaceBackgroundScene() = default;
     SpaceBackgroundScene(float minBrightness, float maxBrightness):
         minBrightness(minBrightness), maxBrightness(maxBrightness){};
-    void Init() override{
-        std::random_device rand_dev;
-        std::mt19937 generator(rand_dev());
-        std::uniform_real_distribution<float>  dist2(0, 1);
-//        std::uniform_int_distribution<float>  dist3(3, 5);
-        stars.clear();
-        planets.clear();
-        for (int i = 0; i < 15; i++) {
-            Star star = Star();
-            star.size = dist2(generator) * 25 + 15;
-            star.position = Point(
-                    dist2(generator) * r->width,
-                    dist2(generator) * r->height);
-            star.velocity = Point(
-                    0.05 * ((2 * dist2(generator) - 1)),
-                    0.05 * ((2 * dist2(generator) - 1))
-                    );
-            star.offset = dist2(generator) * 1000;
-            star.setRasterizer(r);
-            star.minBrightness = minBrightness;
-            star.maxBrightness = maxBrightness;
-            stars.push_back(star);
-        }
-        for (int i = 0; i < 25; i++) {
-            Planet planet = Planet();
-            planet.size = dist2(generator) * 34 + 1;
-            planet.position = Point(
-                    dist2(generator) * r->width,
-                    dist2(generator) * r->height);
-            planet.velocity = Point(
-                    0.05 * ((2 * dist2(generator) - 1)),
-                    0.05 * ((2 * dist2(generator) - 1))
-            );
-            planet.offset = dist2(generator) * 1000;
-            planet.setRasterizer(r);
-            planet.minBrightness = minBrightness;
-            planet.maxBrightness = maxBrightness;
-            planets.push_back(planet);
-        }
-    }
+    void Init() override;
+private:
+    std::vector<Star> stars;
+    std::vector<Planet> planets;
+    const float minBrightness = 0.01, maxBrightness = 0.1;
+
 protected:
     void Draw() override {
         r->fillColor();

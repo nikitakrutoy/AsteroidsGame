@@ -11,7 +11,6 @@
 struct GameState {
     static unsigned int lives;
     static unsigned int score;
-    static std::string currentGameFieldSceneName;
     static std::map<std::string, bool> isLevelCompleted;
     static void setSavePath(std::string path);
     static void Load();

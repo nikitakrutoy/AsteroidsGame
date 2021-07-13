@@ -7,6 +7,22 @@
 #include "MagicNumbers.h"
 #include "Resources.h"
 
+void MenuScene::Init()  {
+    for (auto& m : menuItems) m->SetRasterizer(r);
+    for (auto& l : labels) l->SetRasterizer(r);
+    menuItems[selectedMenuItem]->isSelected = true;
+};
+void MenuScene::Delete() {
+    for (auto& m : menuItems) {
+        m->Delete();
+        delete m;
+    }
+    for (auto& l : labels) {
+        l->Delete();
+        delete l;
+    }
+}
+
 void MenuScene::Draw() {
     for (auto& m : menuItems) {
         m->SafeDraw();
@@ -195,6 +211,6 @@ void GameOverScene::Init() {
     title = "Game Over"; EndGameScene::Init();
     im = Billboard(pepe_outline_png, pepe_outline_png_len);
     im.position = Point(0, r->height - im.height);
-    im.setRasterizer(r);
+    im.SetRasterizer(r);
     EndGameScene::Init();
 }

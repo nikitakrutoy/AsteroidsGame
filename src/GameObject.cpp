@@ -12,6 +12,24 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+void GameObject::SafeDraw() {
+    if(!(enabled && doDraw)) return;
+    if (r) {
+        Draw();
+    } else {
+        std::cout << "No Rasterizer" << std::endl;
+    }
+}
+
+void GameObject::SafeUpdate(float dt) {
+    if(!(enabled && doUpdate)) return;
+    if (r) {
+        Update(dt);
+    } else {
+        std::cout << "No Rasterizer" << std::endl;
+    }
+}
+
 void SpaceObject::Update(float dt) {
     position = position.Translate(velocity.Scale(speed));
     if (isSeamless)
@@ -52,11 +70,11 @@ void Spaceship::Update(float dt) {
 }
 
 
-std::random_device                  rand_dev;
-std::mt19937                        generator(rand_dev());
-std::uniform_real_distribution<float>  dist3(0, 2 * 3.14);
 
 Asteroid::Asteroid(float radius, Point p, float s, bool seamless) {
+    std::random_device                  rand_dev;
+    std::mt19937                        generator(rand_dev());
+    std::uniform_real_distribution<float>  dist3(0, 2 * 3.14);
     position = p;
     speed = s;
     isSeamless = seamless;
@@ -80,8 +98,53 @@ Asteroid::Asteroid(float radius, Point p, float s, bool seamless) {
     this->radius = radius;
 }
 
-#endif //GAME_GAMEOBJECT_CPP
-
 Billboard::Billboard(unsigned char *b, size_t size) {
     buf = stbi_load_from_memory(b, size, &width, &height, &comp, STBI_grey_alpha);
 }
+
+void BackgroundObject::Update(float dt) {
+    elapsedTime += dt;
+    float br = (0.5f * sinf((elapsedTime * blinkSpeed + offset) * 1) + 0.5f) * (maxBrightness - minBrightness) + minBrightness;
+    c = Color(br, br, br);
+    SpaceObject::Update(dt);
+}
+
+void Planet::Draw() {
+    int i1,i2;
+    r->enableSeamless();
+    for (int x = -size; x < size + 1; x++) {
+        i1 = size * sin(acos(float(x) / size));
+        i2 = -i1;
+        if (i2 < i1) std::swap(i1, i2);
+        for (int y = i1; y < i2 + 1; y++) {
+            r->setPixel(position.x + x, position.y + y, c);
+        }
+    }
+    r->disableSeamless();
+}
+
+
+void Star::Draw() {
+    int i1,i2;
+    r->enableSeamless();
+    for (int x = -fsize; x < fsize + 1; x++) {
+        if (x == 0)
+            i1 = fsize + 1;
+        else
+            i1 = std::floor(std::abs(1 / float(x) * size)) * sgn(x);
+        i2 = -i1;
+        if (i2 < i1) std::swap(i1, i2);
+        for (int y = i1; y < i2 + 1; y++) {
+            r->setPixel(position.x + x, position.y + y, c);
+        }
+    }
+    r->setPixel(position.x - size -1, position.y, c);
+    r->setPixel(position.x + size + 1, position.y, c);
+    r->disableSeamless();
+}
+#endif //GAME_GAMEOBJECT_CPP
+
+
+
+
+
