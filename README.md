@@ -4,7 +4,7 @@ Yet Another Asteroids Game
 This game was made as part of admission tests for MIPT GameDev Master Program.
 
 ## Installation
-`cmake .` from project root to build. The binary would be in project's bin folder. You can move it to /usr/local/bin. All resources are contained in binary.
+`cmake .` from project root to build. The binary would be in project's bin folder. You can move it to /usr/local/bin. All resources are contained inside binary.
 
 You can also try to run binaries from bin folder. MacOS binary was built on Big Sur 11.4. Linux binary was build in docker container. Commands to reproduce:
 
@@ -42,7 +42,7 @@ Most of gameplay logic code can be found in [GameFieldScene](/src/GameFieldScene
 
 [MenuScene.cpp](/src/MenuScene.cpp) and [MenuScene.h](/src/MenuScene.h) containes UI scenes classes. Mostly different kind of menus.
 
-[MenuItem.cpp](/src/MenuItem.cpp) and[MenuItem.h](/src/MenuItem.h) container UI game object classes.
+[MenuItem.cpp](/src/MenuItem.cpp) and [MenuItem.h](/src/MenuItem.h) container UI game object classes.
 
 [SceneManeger.cpp](/src/SceneManager.cpp) implements manager that controls switching scenes for scene layers. There are 3 scene layers: Background, Game Field and UI. The only difference is rasterization order.
 
@@ -50,10 +50,9 @@ Most of gameplay logic code can be found in [GameFieldScene](/src/GameFieldScene
 
 [GameState.h](/src/GameState.h) defines global game variables like lives and score that are accessble to all scene and game objects.
 
-## Setting
+## Settings
 
-To modify some parameters before build you can be tune macros in inside [MagicNumbers.h](/src/MagicNumbers.h).
-
+To modify some parameters before build you can tune macros values inside [MagicNumbers.h](/src/MagicNumbers.h). For example you can change MAX_ASTEROIDS_SIZE to 6 if think that they are too big.
 
 
 ## Screenshots
