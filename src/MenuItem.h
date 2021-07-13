@@ -20,8 +20,9 @@ protected:
     void Draw() override{
         Color c = Color();
         if (isSelected) {
-            float v = std::round((std::sin(elapsedTime * 10) + 1));
+            float v = std::round((0.5 * std::sin(elapsedTime * 10) + 0.5));
             c = c * v;
+            c.A = v;
         }
         r->drawText(text, position, NORMAL_TEXT_SIZE, 0, c, 2, align);
     }
@@ -48,14 +49,17 @@ protected:
 
 struct SceneMenuItem: MenuItem  {
 public:
-    SceneMenuItem(std::string text, std::string sceneName, bool doReset, Point p, bool align = true):
-        MenuItem(text, p, align), sceneName(sceneName), doReset(doReset){};
-    std::string GetSceneName() {return sceneName;}
+    SceneMenuItem(std::string text, std::string bgSceneName, std::string gameSceneName, std::string uiSceneName,
+                  Point p, bool align = true): MenuItem(text, p, align),
+        bgSceneName(bgSceneName), gameSceneName(gameSceneName), uiSceneName(uiSceneName){};
+    std::string GetGameSceneName() {return gameSceneName;}
 private:
     bool enterWasPressed = false;
     bool doReset = false;
 protected:
-    std::string sceneName;
+    std::string bgSceneName;
+    std::string gameSceneName;
+    std::string uiSceneName;
     void Update(float dt) override{
         MenuItem::Update(dt);
         if (is_key_pressed(VK_RETURN) && !enterWasPressed) {
@@ -63,23 +67,48 @@ protected:
         }
 
         if (!is_key_pressed(VK_RETURN) && enterWasPressed && isSelected) {
-            sceneManager.SetScene(sceneName);
-            if (doReset) sceneManager.currentScene->Init();
+            SetScene();
             enterWasPressed = false;
         }
     }
-};
-
-
-struct RetryMenuItem: SceneMenuItem {
-    RetryMenuItem(std::string text, bool doReset, Point p, bool align = true):
-            SceneMenuItem(text, "", doReset,  p, align) {};
 protected:
-    void Update(float dt) override {
-        sceneName = GameState::currentGameFieldSceneName;
-        SceneMenuItem::Update(dt);
+    virtual void SetScene() {
+        if (!bgSceneName.empty()) sceneManager.SetBackgroundScene(bgSceneName);
+        else sceneManager.UnsetBackgroundScene();
+
+        if (!gameSceneName.empty()) sceneManager.SetGameScene(gameSceneName);
+        else sceneManager.UnsetGameScene();
+
+        if (!uiSceneName.empty()) sceneManager.SetUIScene(uiSceneName);
+        else sceneManager.UnsetUIScene();
     }
 };
 
+
+struct ContinueMenuItem: SceneMenuItem {
+    ContinueMenuItem(std::string text,std::string background, Point p, bool align = true):
+        SceneMenuItem(text, background, "", "",  p, align) {};
+protected:
+    void Update(float dt) override {
+        gameSceneName = sceneManager.lastGameSceneName;
+        SceneMenuItem::Update(dt);
+    }
+
+    void SetScene() override {
+        SceneMenuItem::SetScene();
+        sceneManager.currentGameScene->doUpdate = true;
+    }
+};
+
+struct RetryMenuItem: ContinueMenuItem {
+    RetryMenuItem(std::string text, std::string background, Point p, bool align = true):
+            ContinueMenuItem(text, background, p, align) {};
+protected:
+
+    void SetScene() override {
+        ContinueMenuItem::SetScene();
+        sceneManager.currentGameScene->Init();
+    }
+};
 
 #endif //GAME_MENUITEM_H

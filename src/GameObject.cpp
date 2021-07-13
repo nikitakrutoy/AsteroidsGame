@@ -46,7 +46,6 @@ void Spaceship::Update(float dt) {
     SpaceObject::Update(dt);
     if (isInvincible) {
         float v = std::round((std::sin(elapsedTime * 20) + 1));
-        std::cout << elapsedTime << std::endl;
         c = Color() * v;
         elapsedTime += dt;
     }

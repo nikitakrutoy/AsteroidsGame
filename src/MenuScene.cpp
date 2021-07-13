@@ -8,7 +8,6 @@
 #include "Resources.h"
 
 void MenuScene::Draw() {
-    r->fillColor();
     for (auto& m : menuItems) {
         m->SafeDraw();
     }
@@ -43,24 +42,21 @@ void MenuScene::Update(float dt) {
     }
 }
 
-void GameOverScene::Init() {
+void EndGameScene::Init() {
     position = Point(r->width / 2, r->height / 2 - 80);
-    im = Billboard(pepe_outline_png, pepe_outline_png_len);
-    im.position = Point(0, r->height - im.height);
-    im.setRasterizer(r);
+
     menuItems = std::vector<MenuItem*>({
            new RetryMenuItem(
-                   "Retry", true,
-                   position.Translate(Point(0, 100))),
+                   "Retry", "SpaceBackgroundDark", position.Translate(Point(0, 100))),
            new SceneMenuItem(
-                   "Main Menu", "MainMenu", true,
+                   "Main Menu", "SpaceBackgroundLight", "", "MainMenu",
                    position.Translate(Point(0, 135))),
            new ExitMenuItem(
                    "Exit", position.Translate(Point(0, 170)))
     });
     Point scoreTextPosition = position.Translate(Point(0, GAMEOVER_TEXT_SIZE + 10));
     labels = std::vector<TextObject*>({
-        new TextObject("Game Over", position, GAMEOVER_TEXT_SIZE, Color(), 2, true),
+        new TextObject(title, position, GAMEOVER_TEXT_SIZE, Color(), 2, true),
         new ScoreText("", scoreTextPosition, NORMAL_TEXT_SIZE, Color(),  2, true)
     });
     MenuScene::Init();
@@ -69,14 +65,12 @@ void GameOverScene::Init() {
 void PauseScene::Init() {
     position = Point(r->width / 2, r->height / 2 - 80);
     menuItems = std::vector<MenuItem*>({
-           new SceneMenuItem(
-                   "Continue", "GameField", false,
-                   position.Translate(Point(0, 100))),
+           new ContinueMenuItem(
+                   "Continue", "SpaceBackgroundDark", position.Translate(Point(0, 100))),
            new RetryMenuItem(
-                   "Retry", true,
-                   position.Translate(Point(0, 135))),
+                   "Retry", "SpaceBackgroundDark", position.Translate(Point(0, 135))),
            new SceneMenuItem(
-                   "Main Menu", "MainMenu", true,
+                   "Main Menu", "SpaceBackgroundLight", "", "MainMenu",
                    position.Translate(Point(0, 170))),
            new ExitMenuItem(
                    "Exit", position.Translate(Point(0, 205)))
@@ -93,20 +87,20 @@ void LevelsScene::Init() {
     position = Point(100, r->height / 2 - 80);
     menuItems = std::vector<MenuItem*>({
            new SceneMenuItem(
-                   "Level1", "Level1", true,
-                   position.Translate(Point(0, 140)), false),
+                   "Level1", "SpaceBackgroundDark", "Level1", "",
+                   position.Translate(Point(0, 100)), false),
            new SceneMenuItem(
-                   "Level2", "Level2", true,
-                   position.Translate(Point(0, 175)), false),
+                   "Level2", "SpaceBackgroundDark", "Level2", "",
+                   position.Translate(Point(0, 135)), false),
            new SceneMenuItem(
-                   "Level3", "Level3", true,
-                   position.Translate(Point(0, 210)), false),
+                   "Level3", "SpaceBackgroundDark", "Level3", "",
+                   position.Translate(Point(0, 170)), false),
            new SceneMenuItem(
-                   "Level4", "Level4", true,
-                   position.Translate(Point(0, 245)), false),
+                   "Level4", "SpaceBackgroundDark", "Level4", "",
+                   position.Translate(Point(0, 205)), false),
            new SceneMenuItem(
-                   "Back", "MainMenu", true,
-                   position.Translate(Point(0, 280)), false),
+                   "Back", "SpaceBackgroundLight", "", "MainMenu",
+                   position.Translate(Point(0, 240)), false),
     });
     labels = std::vector<TextObject*>({
           new TextObject("Select Level", position, GAMEOVER_TEXT_SIZE, Color(), 2, false),
@@ -139,7 +133,7 @@ void LevelsScene::Init() {
     for (int i = 0; i < menuItems.size() - 1; i++) {
         auto* s = dynamic_cast<SceneMenuItem*>(menuItems[i]);
         if (s) {
-            auto s2 = dynamic_cast<GameFieldScene*>(sceneManager.GetScene(s->GetSceneName()).get());
+            auto s2 = dynamic_cast<GameFieldScene*>(sceneManager.GetScene(s->GetGameSceneName()).get());
             levelSpecs[i] = s2->GetSpec();
         }
     }
@@ -150,8 +144,13 @@ void LevelsScene::Update(float dt) {
     if (selectedMenuItem < menuItems.size() - 1){
         labels[1]->text = descriptions[selectedMenuItem];
         labels[2]->text = "lives : " + std::to_string(levelSpecs[selectedMenuItem].lives);
-        labels[3]->text = "invincibility : " + std::to_string(levelSpecs[selectedMenuItem].invTime);
+        labels[3]->text = "invincibility : " + std::to_string(levelSpecs[selectedMenuItem].invTime) + "s";
         labels[4]->text = "asteroids : " + std::to_string(levelSpecs[selectedMenuItem].quantity);
+    } else {
+        labels[1]->text = "";
+        labels[2]->text = "";
+        labels[3]->text = "";
+        labels[4]->text = "";
     }
 
     for (auto& kv : levelName2LabelIndex) {
@@ -166,12 +165,12 @@ void LevelsScene::Update(float dt) {
 
 void TitleScene::Init() {
     position = Point(r->width / 2, TITLE_TEXT_SIZE / 2 + 50);
-    Point center = Point(r->width / 2, r->height / 2 - 50);
+    Point center = Point(r->width / 2, r->height / 2 + 25);
     menuItems = std::vector<MenuItem*>({
            new SceneMenuItem(
-                   "Infinite Mode", "GameField", true, center),
+                   "Infinite Mode", "SpaceBackgroundDark", "GameField", "", center),
            new SceneMenuItem(
-                   "Select Level", "Levels", true,
+                   "Select Level", "SpaceBackgroundLight", "Levels", "",
                    center.Translate(Point(0, NORMAL_TEXT_SIZE + 10))),
            new ExitMenuItem(
                    "Exit", center.Translate(Point(0, 2 * (NORMAL_TEXT_SIZE + 10))))
@@ -190,4 +189,12 @@ void TitleScene::Update(float dt) {
     elapsedTime += dt;
     labels[1]->size = 3 * sin(elapsedTime * 10) + NORMAL_TEXT_SIZE + 10;
     MenuScene::Update(dt);
+}
+
+void GameOverScene::Init() {
+    title = "Game Over"; EndGameScene::Init();
+    im = Billboard(pepe_outline_png, pepe_outline_png_len);
+    im.position = Point(0, r->height - im.height);
+    im.setRasterizer(r);
+    EndGameScene::Init();
 }

@@ -20,8 +20,9 @@ void initialize()
     GameState::setSavePath("/tmp");
     GameState::Load();
 
-
-    std::shared_ptr<Scene> background = std::shared_ptr<Scene>(new BackgroundScene());
+    std::shared_ptr<Scene> solidBackground = std::shared_ptr<Scene>(new SolidBackgroundScene());
+    std::shared_ptr<Scene> spaceBackgroundDark = std::shared_ptr<Scene>(new SpaceBackgroundScene(0.1, 0.2));
+    std::shared_ptr<Scene> spaceBackgroundLight = std::shared_ptr<Scene>(new SpaceBackgroundScene(0.1, 0.3));
 
     // Define Infinite Mode Scene and Levels Scenes
     std::shared_ptr<Scene> gameField = std::shared_ptr<Scene>(new GameFieldScene(20, true));
@@ -35,6 +36,7 @@ void initialize()
     std::shared_ptr<Scene> pauseMenu = std::shared_ptr<Scene>(new PauseScene());
     std::shared_ptr<Scene> mainMenu = std::shared_ptr<Scene>(new TitleScene());
     std::shared_ptr<Scene> levelsMenu = std::shared_ptr<Scene>(new LevelsScene());
+    std::shared_ptr<Scene> completeMenu = std::shared_ptr<Scene>(new CompleteScene());
 
     // Init and set rasterizer
     std::shared_ptr<Rasterizer> rasterizer =std::shared_ptr<Rasterizer>(
@@ -42,9 +44,12 @@ void initialize()
     sceneManager.SetRasterizer(rasterizer);
 
     // Add defined scenes to scene manager
-    sceneManager.AddScene("Background", background);
+    sceneManager.AddScene("SolidBackground", solidBackground);
+    sceneManager.AddScene("SpaceBackgroundDark", spaceBackgroundDark);
+    sceneManager.AddScene("SpaceBackgroundLight", spaceBackgroundLight);
     sceneManager.AddScene("GameField", gameField);
     sceneManager.AddScene("GameOver", gameOverMenu);
+    sceneManager.AddScene("Complete", completeMenu);
     sceneManager.AddScene("Pause", pauseMenu);
     sceneManager.AddScene("MainMenu", mainMenu);
     sceneManager.AddScene("Levels", levelsMenu);
@@ -54,8 +59,10 @@ void initialize()
     sceneManager.AddScene("Level4", level4);
 
     // Init and set main menu screne
-    sceneManager.SetScene("MainMenu");
-    sceneManager.currentScene->Init();
+    sceneManager.SetBackgroundScene("SpaceBackgroundLight");
+    sceneManager.SetUIScene("MainMenu");
+    sceneManager.currentBackgroundScene->Init();
+    sceneManager.currentUIScene->Init();
 
 }
 
@@ -63,14 +70,19 @@ void initialize()
 // dt - time elapsed since the previous update (in seconds)
 void act(float dt)
 {
-    sceneManager.currentScene->SafeUpdate(dt);
+    if(sceneManager.currentBackgroundScene) sceneManager.currentBackgroundScene->SafeUpdate(dt);
+    if(sceneManager.currentGameScene) sceneManager.currentGameScene->SafeUpdate(dt);
+    if(sceneManager.currentUIScene) sceneManager.currentUIScene->SafeUpdate(dt);
 }
 
 // fill buf in this function
 // uint32_t buf[SCREEN_HEIGHT][SCREEN_WIDTH] - is an array of 32-bit colors (8 bits per R, G, buf)
 void draw()
 {
-    sceneManager.currentScene->SafeDraw();
+    if(sceneManager.currentBackgroundScene) sceneManager.currentBackgroundScene->SafeDraw();
+    else sceneManager.GetScene("SolidBackground")->SafeDraw();
+    if(sceneManager.currentGameScene) sceneManager.currentGameScene->SafeDraw();
+    if(sceneManager.currentUIScene) sceneManager.currentUIScene->SafeDraw();
 }
 
 // free game data in this function

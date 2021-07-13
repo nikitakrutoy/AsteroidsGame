@@ -15,18 +15,57 @@ private:
     std::shared_ptr<Rasterizer> rasterizer;
 
 public:
-    std::shared_ptr<Scene> currentScene;
+    std::shared_ptr<Scene> currentBackgroundScene;
+    std::shared_ptr<Scene> currentGameScene;
+    std::shared_ptr<Scene> currentUIScene;
+
+    std::string currentBackgroundSceneName;
+    std::string currentGameSceneName;
+    std::string currentUISceneName;
+
+    std::string lastGameSceneName;
 
     SceneManager() = default;
 
     void AddScene(std::string name, std::shared_ptr<Scene>& s);
 
-    void SetScene(std::string name) {
-        currentScene = scenes[name];
-        currentScene->setRasterizer(rasterizer);
-        if (dynamic_cast<GameFieldScene*>(currentScene.get())) {
-            GameState::currentGameFieldSceneName = name;
-        }
+    void SetBackgroundScene(std::string name) {
+        if (name == currentBackgroundSceneName) return;
+        currentBackgroundScene = scenes[name];
+        currentBackgroundSceneName = name;
+        currentBackgroundScene->setRasterizer(rasterizer);
+        currentBackgroundScene->Init();
+    }
+    void SetUIScene(std::string name) {
+        if (name == currentUISceneName) return;
+        currentUIScene = scenes[name];
+        currentUISceneName = name;
+        currentUIScene->setRasterizer(rasterizer);
+        currentUIScene->Init();
+    }
+
+    void SetGameScene(std::string name) {
+        if (name == currentGameSceneName) return;
+        currentGameScene = scenes[name];
+        currentGameScene->setRasterizer(rasterizer);
+        lastGameSceneName = name;
+        currentGameSceneName = name;
+        currentGameScene->Init();
+
+    }
+    void UnsetBackgroundScene() {
+        currentBackgroundScene = nullptr;
+        currentBackgroundSceneName = "";
+    }
+
+    void UnsetUIScene() {
+        currentUIScene = nullptr;
+        currentUISceneName = "";
+    }
+
+    void UnsetGameScene() {
+        currentGameScene = nullptr;
+        currentGameSceneName = "";
     }
 
     std::shared_ptr<Scene> GetScene(std::string name) {

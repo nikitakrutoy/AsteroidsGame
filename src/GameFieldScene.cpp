@@ -52,8 +52,10 @@ void GameFieldScene::Init() {
     player.isSeamless = true;
     player.setRasterizer(r);
 
-    background.setRasterizer(r);
-    background.Init();
+    doUpdate = true;
+    doDraw = true;
+    enabled = true;
+
 
     scoreText = ScoreText("", Point(10, 10), NORMAL_TEXT_SIZE, Color(),  2, false);
     livesText = LivesText("", Point(10, NORMAL_TEXT_SIZE + 20),
@@ -71,7 +73,6 @@ void GameFieldScene::Init() {
 void GameFieldScene::Draw()  {
 //    Color backgroundColor = Color(0.0f,0.0f,0.0f);
 //    r->fillColor(backgroundColor);
-    background.SafeDraw();
     player.SafeDraw();
     for (auto &a : asteroids) a.SafeDraw();
     for (auto &p : projectiles) p.SafeDraw();
@@ -80,17 +81,18 @@ void GameFieldScene::Draw()  {
 }
 
 void GameFieldScene::Update(float dt) {
-    background.SafeUpdate(dt);
     if (GameState::lives <= 0) {
-        sceneManager.SetScene("GameOver");
-        sceneManager.currentScene->Init();
+        sceneManager.SetBackgroundScene("SolidBackground");
+        sceneManager.UnsetGameScene();
+        sceneManager.SetUIScene("GameOver");
         return;
     }
 
     if(!isInfinite and asteroids.empty()) {
-        sceneManager.SetScene("GameOver");
-        sceneManager.currentScene->Init();
-        GameState::isLevelCompleted[GameState::currentGameFieldSceneName] = true;
+        sceneManager.SetBackgroundScene("SolidBackground");
+        sceneManager.UnsetGameScene();
+        sceneManager.SetUIScene("Complete");
+        GameState::isLevelCompleted[sceneManager.lastGameSceneName] = true;
         GameState::Save();
         return;
     }
@@ -150,8 +152,8 @@ void GameFieldScene::Update(float dt) {
     }
 
     if (is_key_pressed(VK_ESCAPE)){
-        sceneManager.SetScene("Pause");
-        sceneManager.currentScene->Init();
+        sceneManager.SetUIScene("Pause");
+        doUpdate = false;
         return;
     }
 
@@ -189,7 +191,7 @@ bool GameFieldScene::DetectCollisions(Point p) {
     as.reserve(as.size() * 2);
     for (auto it = as.begin(); it != as.end();) {
         if (Distance(it->position, p) <= it->radius) {
-            GameState::score += it->radius;
+            GameState::score += 64 - it->radius / 2;
             if (it->radius / 2 >= 8) {
                 Asteroid a1 = Asteroid(
                         it->radius / 2,

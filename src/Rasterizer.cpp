@@ -141,7 +141,7 @@ void Rasterizer::drawGlyph(unsigned char* b, int width, int height, Point positi
         for (int j = 0; j < width; j++) {
             float r = b[i * width + j];
             Color c = color * (r / 255);
-            c.A = std::roundf(r / 255);
+            c.A = c.A * std::roundf(r / 255);
             x = j * std::cos(radians)  - i * std::sin(radians);
             y = j * std::sin(radians) + i * std::cos(radians);
             setPixel(position.x + x, position.y + y, c);

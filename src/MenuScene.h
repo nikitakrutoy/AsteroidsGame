@@ -46,13 +46,21 @@ protected:
     void Draw() override;
 };
 
-struct GameOverScene: MenuScene {
+struct EndGameScene: MenuScene {
+    std::string title;
+    void Init() override;
+};
+
+struct CompleteScene: EndGameScene {
+    void Init() override {title = "Level Completed"; EndGameScene::Init();}
+};
+
+struct GameOverScene: EndGameScene {
     Billboard im;
     void Init() override;
-
 protected:
     void Draw() override {
-        MenuScene::Draw();
+        EndGameScene::Draw();
         im.SafeDraw();
     }
 };
