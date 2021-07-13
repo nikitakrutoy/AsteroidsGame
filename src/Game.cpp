@@ -15,8 +15,6 @@ SceneManager sceneManager;
 // initialize game data in this function
 void initialize()
 {
-    char b[1028];
-    std::cout << "Current path is " << getcwd(b, sizeof(b)) << std::endl;
     GameState::setSavePath("/tmp");
     GameState::Load();
 

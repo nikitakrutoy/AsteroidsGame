@@ -5,8 +5,6 @@
 #ifndef GAME_RASTERIZER_H
 #define GAME_RASTERIZER_H
 
-#include <ft2build.h>
-#include <freetype/freetype.h>
 #include <stb_truetype.h>
 #include "Geometry.h"
 
@@ -30,8 +28,6 @@ struct Color {
 struct Rasterizer {
 private:
     uint32_t* buf;
-    FT_Library ft;
-    FT_Face face;
     unsigned char* fontBuffer;
     stbtt_fontinfo fontInfo;
     bool isSeamless = true;
