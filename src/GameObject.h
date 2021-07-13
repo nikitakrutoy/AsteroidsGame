@@ -59,14 +59,15 @@ protected:
 
 struct TextObject: GameObject {
     std::string text;
-    size_t size;
+    float size;
     Color c;
     size_t spacing;
+    float rotation = 0;
     bool align;
 
     TextObject() = default;
 
-    TextObject(const std::string &text, Point p, size_t size,
+    TextObject(const std::string &text, Point p, float size,
                const Color &c, size_t spacing, bool align) :   text(text),
                                                                size(size), c(c),
                                                                spacing(spacing),
@@ -74,7 +75,7 @@ struct TextObject: GameObject {
 
     TextObject(std::string text): text(text) {};
     void Draw() override {
-        r->drawText(text, position, size, c, spacing, align);
+        r->drawText(text, position, size, rotation, c, spacing, align);
     }
 };
 
@@ -170,6 +171,7 @@ struct BackgroundObjcet : SpaceObject {
     float minBrightness = 0.01;
     float blinkSpeed = 0.5;
     float offset = 0;
+    Color c = Color(0,0,0,0);
 
     void Update(float dt) override{
         elapsedTime += dt;

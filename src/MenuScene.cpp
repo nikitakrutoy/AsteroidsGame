@@ -94,19 +94,19 @@ void LevelsScene::Init() {
     menuItems = std::vector<MenuItem*>({
            new SceneMenuItem(
                    "Level1", "Level1", true,
-                   position.Translate(Point(0, 100)), false),
+                   position.Translate(Point(0, 140)), false),
            new SceneMenuItem(
                    "Level2", "Level2", true,
-                   position.Translate(Point(0, 135)), false),
+                   position.Translate(Point(0, 175)), false),
            new SceneMenuItem(
                    "Level3", "Level3", true,
-                   position.Translate(Point(0, 170)), false),
+                   position.Translate(Point(0, 210)), false),
            new SceneMenuItem(
                    "Level4", "Level4", true,
-                   position.Translate(Point(0, 205)), false),
+                   position.Translate(Point(0, 245)), false),
            new SceneMenuItem(
                    "Back", "MainMenu", true,
-                   position.Translate(Point(0, 240)), false),
+                   position.Translate(Point(0, 280)), false),
     });
     labels = std::vector<TextObject*>({
           new TextObject("Select Level", position, GAMEOVER_TEXT_SIZE, Color(), 2, false),
@@ -165,7 +165,7 @@ void LevelsScene::Update(float dt) {
 
 
 void TitleScene::Init() {
-    position = Point(r->width / 2, TITLE_TEXT_SIZE / 2 + 10);
+    position = Point(r->width / 2, TITLE_TEXT_SIZE / 2 + 50);
     Point center = Point(r->width / 2, r->height / 2 - 50);
     menuItems = std::vector<MenuItem*>({
            new SceneMenuItem(
@@ -178,6 +178,16 @@ void TitleScene::Init() {
     });
     labels = std::vector<TextObject*>({
           new TextObject("Asteroids", position, TITLE_TEXT_SIZE, Color(), 10, true),
+          new TextObject("Made by Nikita Krutoy", position.Translate(Point(140, 70)),
+                         NORMAL_TEXT_SIZE + 10, Color(0.83529f, 0.83529f,	0.31765f), 2, true)
     });
+    labels[1]->rotation = -15;
     MenuScene::Init();
+}
+
+
+void TitleScene::Update(float dt) {
+    elapsedTime += dt;
+    labels[1]->size = 3 * sin(elapsedTime * 10) + NORMAL_TEXT_SIZE + 10;
+    MenuScene::Update(dt);
 }

@@ -17,7 +17,7 @@ void initialize()
 {
     char b[1028];
     std::cout << "Current path is " << getcwd(b, sizeof(b)) << std::endl;
-    GameState::setSavePath("../data");
+    GameState::setSavePath("/tmp");
     GameState::Load();
 
 
@@ -54,7 +54,7 @@ void initialize()
     sceneManager.AddScene("Level4", level4);
 
     // Init and set main menu screne
-    sceneManager.SetScene("GameField");
+    sceneManager.SetScene("MainMenu");
     sceneManager.currentScene->Init();
 
 }

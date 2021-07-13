@@ -24,7 +24,7 @@ void GameState::setSavePath(std::string path) {
 void GameState::Load() {
     std::string line, key;
     bool value;
-    std::ifstream saveFile (savePath + "/save");
+    std::ifstream saveFile (savePath + "/asteroidsSave");
     if (saveFile.is_open())
     {
         while ( getline(saveFile,line) )
@@ -39,7 +39,7 @@ void GameState::Load() {
 }
 
 void GameState::Save() {
-    std::ofstream saveFile (savePath + "/save");
+    std::ofstream saveFile (savePath + "/asteroidsSave");
     if (saveFile.is_open())
     {
         for (auto& kv : isLevelCompleted) {

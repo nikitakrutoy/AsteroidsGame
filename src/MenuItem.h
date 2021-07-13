@@ -23,7 +23,7 @@ protected:
             float v = std::round((std::sin(elapsedTime * 10) + 1));
             c = c * v;
         }
-        r->drawText(text, position, NORMAL_TEXT_SIZE, c, 2, align);
+        r->drawText(text, position, NORMAL_TEXT_SIZE, 0, c, 2, align);
     }
     void Update(float dt) override{
         elapsedTime += dt;

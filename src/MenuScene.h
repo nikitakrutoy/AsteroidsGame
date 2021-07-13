@@ -43,8 +43,6 @@ protected:
             delete l;
         }
     }
-
-protected:
     void Draw() override;
 };
 
@@ -64,7 +62,11 @@ struct PauseScene: MenuScene {
 };
 
 struct TitleScene: MenuScene {
+    float elapsedTime = 0;
     void Init() override;
+
+protected:
+    void Update(float dt) override;
 };
 
 struct LevelsScene: MenuScene {

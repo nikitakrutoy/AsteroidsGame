@@ -44,8 +44,9 @@ public:
     void drawBlob(Point p, int size = 1, Color c = Color());
     void drawLine(Point p1, Point p2, Color c = Color());
     void drawPath(Path& p, Color c = Color());
-    void drawGlyph(unsigned char* b, int width, int height, Point position, Color color = Color());
-    void drawText(const std::string& text, Point position, float size = 24,
+    void drawGlyph(unsigned char* b, int width, int height, Point position, float angle = 0,
+                   Color color = Color());
+    void drawText(const std::string& text, Point position, float size = 24, float angle = 0,
                   Color c = Color(), float space = 2, bool align = false);
     void drawImage(unsigned char* bf, size_t width, size_t height, Point p);
 

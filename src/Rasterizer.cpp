@@ -135,12 +135,16 @@ void Rasterizer::drawPath(Path& p, Color c) {
         drawLine(p.data[i], p.data[0], c);
 }
 
-void Rasterizer::drawGlyph(unsigned char* b, int width, int height, Point position, Color color) {
+void Rasterizer::drawGlyph(unsigned char* b, int width, int height, Point position, float radians, Color color) {
+    float x, y;
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             float r = b[i * width + j];
-            Color c = color * r;
-            setPixel(position.x + j, position.y + i, c);
+            Color c = color * (r / 255);
+            c.A = std::roundf(r / 255);
+            x = j * std::cos(radians)  - i * std::sin(radians);
+            y = j * std::sin(radians) + i * std::cos(radians);
+            setPixel(position.x + x, position.y + y, c);
         }
     }
 }
@@ -152,7 +156,9 @@ void Rasterizer::fillColor(Color c) {
 }
 
 
-void Rasterizer::drawText(const std::string& text, Point position, float size, Color c, float space, bool align) {
+void Rasterizer::drawText(const std::string& text, Point position, float size, float angle,
+                          Color c, float space, bool align) {
+    float radians = M_PI * angle / 180;
     float scale = stbtt_ScaleForPixelHeight(&fontInfo, size);
     if (align) {
         int text_width = 0;
@@ -166,7 +172,10 @@ void Rasterizer::drawText(const std::string& text, Point position, float size, C
             stbtt_GetCodepointHMetrics(&fontInfo, ch, &ax, &lsb);
             text_width += roundf(ax * scale);
         }
-        position = position.Translate(Point(-text_width / 2, 0));
+        position = position.Translate(Point(
+                -text_width / 2 * cos(radians),
+                -text_width / 2 * sin(radians)
+                ));
     }
 
     int ascent, descent, lineGap;
@@ -192,10 +201,14 @@ void Rasterizer::drawText(const std::string& text, Point position, float size, C
         /* render character (stride and offset is important here) */
         stbtt_MakeCodepointBitmap(&fontInfo, bitmap, w, h, w, scale, scale, ch);
 
-        drawGlyph(bitmap, w, h,  position.Translate(Point(0, ascent + c_y1)), c);
+        drawGlyph(bitmap, w, h,  position.Translate(Point(
+                -(ascent + c_y1) * sin(radians), (ascent + c_y1) * cos(radians))), radians,  c);
         memset(bitmap, 0, 4 * size * size);
 
-        position = position.Translate(Point(roundf(ax * scale), 0));
+        position = position.Translate(Point(
+                roundf(ax * scale) * cos(radians),
+                roundf(ax * scale) * sin(radians)
+        ));
         if (ch == char(32))
             position = position.Translate(Point(space * SPACE_LENGTH, 0));
     }
