@@ -212,7 +212,7 @@ protected:
             if (x == 0)
                 i1 = fsize + 1;
             else
-                i1 = std::floor(abs(1 / float(x) * size)) * sgn(x);
+                i1 = std::floor(std::abs(1 / float(x) * size)) * sgn(x);
             i2 = -i1;
             if (i2 < i1) std::swap(i1, i2);
             for (int y = i1; y < i2 + 1; y++) {

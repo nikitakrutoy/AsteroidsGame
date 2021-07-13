@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 3.17)
 set(CMAKE_CXX_STANDARD 14)
 project(asteroids)
 
+
 find_package( X11 REQUIRED )
 MESSAGE("X11 information:")
 MESSAGE("  X11_INCLUDE_DIR: ${X11_INCLUDE_DIR}")
@@ -20,5 +21,12 @@ set(CMAKE_CONFIGURATION_TYPES "Debug" "Release")
 file(GLOB SRC src/*.cpp)
 
 add_executable(asteroids ${SRC})
+
+if (APPLE)
+    set_target_properties(asteroids PROPERTIES OUTPUT_NAME "asteroids_macos")
+elseif(UNIX AND NOT APPLE)
+    set_target_properties(asteroids PROPERTIES OUTPUT_NAME "asteroids_linux")
+endif()
+
 target_link_libraries(asteroids LINK_PUBLIC ${X11_LIBRARIES})
 
