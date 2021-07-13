@@ -39,7 +39,7 @@ Most of gameplay logic code can be found in [GameFieldScene](/src/GameFieldScene
 
 [SceneManeger.cpp](/src/SceneManager.cpp) implements manager that controls switching scenes for scene layers. There are 3 scene layers: Background, Game Field and UI. The only difference is rasterization order.
 
-[Rasterizer.cpp](/src/Rasterizer.cpp) implents different kinds of rasterization algorithms used for drawing game objects and scenes.
+[Rasterizer.cpp](/src/Rasterizer.cpp) implements different kinds of rasterization algorithms used for drawing game objects and scenes.
 
 [GameState.h](/src/GameState.h) defines global game variables like lives and score that are accessble to all scene and game objects.
 
