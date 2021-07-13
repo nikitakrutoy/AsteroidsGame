@@ -23,7 +23,7 @@ float frame2(float x, int y_min, int y_max)  {
 
 
 float Distance(Point p1, Point p2) {
-    return std::sqrtf(std::powf((p1.x  - p2.x), 2) + std::powf((p1.y - p2.y), 2));
+    return sqrtf(powf((p1.x  - p2.x), 2) + powf((p1.y - p2.y), 2));
 }
 
 Point Point::Translate(Point position) const {

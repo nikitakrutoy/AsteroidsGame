@@ -60,7 +60,7 @@ Asteroid::Asteroid(float radius, Point p, float s, bool seamless) {
     position = p;
     speed = s;
     isSeamless = seamless;
-    std::uniform_int_distribution<float>  distr(radius - 3, radius + 3);
+    std::uniform_int_distribution<int>  distr(radius - 3, radius + 3);
     std::vector<Point> data;
     data.reserve(20);
     for (int i = 0; i < 20; i++) {
