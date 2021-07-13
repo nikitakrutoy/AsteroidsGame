@@ -6,6 +6,13 @@ This game was made as part of admission tests for MIPT GameDev Master Program.
 ## Installation
 `cmake .` from project root to build. The binary would be in project's bin folder. You can move it to /usr/local/bin. All resources are contained in binary.
 
+You can also try to run binaries from bin folder. MacOS binary was built on Big Sur 11.4. Linux binary was build in docker container. Commands to reproduce:
+
+```
+docker build . -t asteroidsbuild 
+docker run --volume /path/to/project/root:/app asteroidsbuild /bin/bash -c "cmake ../ && cmake --build ."
+```
+
 ## Gameplay
 `Left/Right` to rotate. `Up`to Boost. `Space` to shoot. Game can paused at any moment with `Esc` key.
 
