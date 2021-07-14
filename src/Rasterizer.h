@@ -29,19 +29,19 @@ private:
 public:
     size_t height, width;
     Rasterizer(uint32_t *buffer, size_t height, size_t width);
-    void setPixel(int x, int y, const Color &c);
-    void fillColor(Color c = Color(0, 0, 0));
-    void drawBlob(Point p, int size = 1, Color c = Color());
-    void drawLine(Point p1, Point p2, Color c = Color());
-    void drawPath(Path& p, Color c = Color());
-    void drawGlyph(unsigned char* b, int width, int height, Point position, float angle = 0,
+    void SetPixel(int x, int y, const Color &c);
+    void FillColor(Color c = Color(0, 0, 0));
+    void DrawBlob(Point p, int size = 1, Color c = Color());
+    void DrawLine(Point p1, Point p2, Color c = Color());
+    void DrawPath(Path& p, Color c = Color());
+    void DrawGlyph(unsigned char* b, int width, int height, Point position, float angle = 0,
                    Color color = Color());
-    void drawText(const std::string& text, Point position, float size = 24, float angle = 0,
+    void DrawText(const std::string& text, Point position, float size = 24, float angle = 0,
                   Color c = Color(), float space = 2, bool align = false);
-    void drawImage(const unsigned char *bf, const size_t w, const size_t h, Point p);
+    void DrawImage(const unsigned char *bf, const size_t w, const size_t h, Point p);
 
 
-    void enableSeamless() { isSeamless = true; };
-    void disableSeamless() { isSeamless = false; };
+    void EnableSeamless() { isSeamless = true; };
+    void DisableSeamless() { isSeamless = false; };
 };
 #endif //GAME_RASTERIZER_H

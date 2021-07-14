@@ -19,7 +19,7 @@ void MenuItem::Draw() {
         color = color * v;
         color.A = v;
     }
-    r->drawText(text, position, NORMAL_TEXT_SIZE, 0, color, 2, align);
+    r->DrawText(text, position, NORMAL_TEXT_SIZE, 0, color, 2, align);
 }
 
 void ExitMenuItem::Update(float dt)  {

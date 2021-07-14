@@ -13,7 +13,7 @@ struct SolidBackgroundScene: Scene {
     Color c = Color(0,0,0, 1);
 protected:
     void Draw() override {
-        r->fillColor(c);
+        r->FillColor(c);
     }
 };
 
@@ -31,7 +31,7 @@ private:
 
 protected:
     void Draw() override {
-        r->fillColor();
+        r->FillColor();
         for (auto &p : planets) p.SafeDraw();
         for (auto &s : stars) s.SafeDraw();
     }

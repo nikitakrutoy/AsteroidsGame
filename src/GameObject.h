@@ -63,7 +63,7 @@ struct TextObject: GameObject {
 
     TextObject(std::string text): text(text) {};
     void Draw() override {
-        r->drawText(text, position, size, rotation, c, spacing, align);
+        r->DrawText(text, position, size, rotation, c, spacing, align);
     }
 };
 
@@ -125,7 +125,7 @@ struct Projectile: SpaceObject {
     };
 protected:
     void Draw() override {
-        r->drawBlob(position, 1);
+        r->DrawBlob(position, 1);
     }
 };
 
@@ -148,7 +148,7 @@ struct Billboard: GameObject {
 
 protected:
     void Draw() override {
-        r->drawImage(buf, width, height, position);
+        r->DrawImage(buf, width, height, position);
     }
 };
 

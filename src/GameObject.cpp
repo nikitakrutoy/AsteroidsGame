@@ -51,11 +51,11 @@ void SpaceObject::Rotate(float degree) {
 void SpaceObject::Draw()  {
     Path p = path.Scale(scale).Translate(position);
     if (isSeamless) {
-        r->enableSeamless();
-        r->drawPath(p, c);
-        r->disableSeamless();
+        r->EnableSeamless();
+        r->DrawPath(p, c);
+        r->DisableSeamless();
     } else {
-        r->drawPath(p, c);
+        r->DrawPath(p, c);
     }
 
 }
@@ -111,22 +111,22 @@ void BackgroundObject::Update(float dt) {
 
 void Planet::Draw() {
     int i1,i2;
-    r->enableSeamless();
+    r->EnableSeamless();
     for (int x = -size; x < size + 1; x++) {
         i1 = size * sin(acos(float(x) / size));
         i2 = -i1;
         if (i2 < i1) std::swap(i1, i2);
         for (int y = i1; y < i2 + 1; y++) {
-            r->setPixel(position.x + x, position.y + y, c);
+            r->SetPixel(position.x + x, position.y + y, c);
         }
     }
-    r->disableSeamless();
+    r->DisableSeamless();
 }
 
 
 void Star::Draw() {
     int i1,i2;
-    r->enableSeamless();
+    r->EnableSeamless();
     for (int x = -fsize; x < fsize + 1; x++) {
         if (x == 0)
             i1 = fsize + 1;
@@ -135,12 +135,12 @@ void Star::Draw() {
         i2 = -i1;
         if (i2 < i1) std::swap(i1, i2);
         for (int y = i1; y < i2 + 1; y++) {
-            r->setPixel(position.x + x, position.y + y, c);
+            r->SetPixel(position.x + x, position.y + y, c);
         }
     }
-    r->setPixel(position.x - size -1, position.y, c);
-    r->setPixel(position.x + size + 1, position.y, c);
-    r->disableSeamless();
+    r->SetPixel(position.x - size - 1, position.y, c);
+    r->SetPixel(position.x + size + 1, position.y, c);
+    r->DisableSeamless();
 }
 #endif //GAME_GAMEOBJECT_CPP
 

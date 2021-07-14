@@ -64,7 +64,7 @@ Rasterizer::Rasterizer(uint32_t *buffer, size_t height, size_t width) : buf(buff
     isSeamless = true;
 };
 
-void Rasterizer::setPixel(int x, int y, const Color &c)
+void Rasterizer::SetPixel(int x, int y, const Color &c)
 {
     std::swap(x, y);
     if (isSeamless){
@@ -78,20 +78,20 @@ void Rasterizer::setPixel(int x, int y, const Color &c)
 //    buf[x * width + y] = c.ToUInt32();
 }
 
-void Rasterizer::drawBlob(Point p, int size, Color c) {
+void Rasterizer::DrawBlob(Point p, int size, Color c) {
     for (int i = p.x - size; i <= p.x + size; i++) {
         for (int j = p.y - size; j <= p.y + size; j++) {
-            setPixel(i, j, c);
+            SetPixel(i, j, c);
         }
     }
 }
 
-void Rasterizer::drawLine(Point p1, Point p2, Color c) {
+void Rasterizer::DrawLine(Point p1, Point p2, Color c) {
     float xdiff = (p2.x - p1.x);
     float ydiff = (p2.y - p1.y);
 
     if(xdiff == 0.0f && ydiff == 0.0f) {
-        setPixel(p1.x, p2.y, c);
+        SetPixel(p1.x, p2.y, c);
         return;
     }
 
@@ -112,7 +112,7 @@ void Rasterizer::drawLine(Point p1, Point p2, Color c) {
         float slope = ydiff / xdiff;
         for(float x = xmin; x <= xmax; x += 1.0f) {
             float y = p1.y + ((x - p1.x) * slope);
-            setPixel(x, y, c);
+            SetPixel(x, y, c);
         }
     } else {
         float ymin, ymax;
@@ -131,41 +131,41 @@ void Rasterizer::drawLine(Point p1, Point p2, Color c) {
         float slope = xdiff / ydiff;
         for(float y = ymin; y <= ymax; y += 1.0f) {
             float x = p1.x + ((y - p1.y) * slope);
-            setPixel(x, y, c);
+            SetPixel(x, y, c);
         }
     }
 }
 
-void Rasterizer::drawPath(Path& p, Color c) {
+void Rasterizer::DrawPath(Path& p, Color c) {
     int i;
     for (i = 0; i < p.data.size() - 1; i++) {
-        drawLine(p.data[i], p.data[i + 1], c);
+        DrawLine(p.data[i], p.data[i + 1], c);
     }
     if (p.isClosed)
-        drawLine(p.data[i], p.data[0], c);
+        DrawLine(p.data[i], p.data[0], c);
 }
 
-void Rasterizer::drawGlyph(unsigned char* b, int width, int height, Point position, float radians, Color color) {
+void Rasterizer::DrawGlyph(unsigned char* b, int width, int height, Point position, float angle, Color color) {
     float x, y;
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             float r = b[i * width + j];
             Color c = color * (r / 255);
-            x = j * std::cos(radians)  - i * std::sin(radians);
-            y = j * std::sin(radians) + i * std::cos(radians);
-            setPixel(position.x + x, position.y + y, c);
+            x = j * std::cos(angle) - i * std::sin(angle);
+            y = j * std::sin(angle) + i * std::cos(angle);
+            SetPixel(position.x + x, position.y + y, c);
         }
     }
 }
 
-void Rasterizer::fillColor(Color c) {
+void Rasterizer::FillColor(Color c) {
     uint32_t array[height * width];
     std::fill(array, array + height * width, c.ToUInt32());
     memcpy(buf, array, height * width * sizeof(uint32_t));
 }
 
 
-void Rasterizer::drawText(const std::string& text, Point position, float size, float angle,
+void Rasterizer::DrawText(const std::string& text, Point position, float size, float angle,
                           Color c, float space, bool align) {
     float radians = M_PI * angle / 180;
     float scale = stbtt_ScaleForPixelHeight(&fontInfo, size);
@@ -210,8 +210,8 @@ void Rasterizer::drawText(const std::string& text, Point position, float size, f
         /* render character (stride and offset is important here) */
         stbtt_MakeCodepointBitmap(&fontInfo, bitmap, w, h, w, scale, scale, ch);
 
-        drawGlyph(bitmap, w, h,  position.Translate(Point(
-                -(ascent + c_y1) * sin(radians), (ascent + c_y1) * cos(radians))), radians,  c);
+        DrawGlyph(bitmap, w, h, position.Translate(Point(
+                -(ascent + c_y1) * sin(radians), (ascent + c_y1) * cos(radians))), radians, c);
         memset(bitmap, 0, 4 * size * size);
 
         position = position.Translate(Point(
@@ -224,7 +224,7 @@ void Rasterizer::drawText(const std::string& text, Point position, float size, f
     free(bitmap);
 }
 
-void Rasterizer::drawImage(const unsigned char *bf, const size_t w, const size_t h, Point p) {
+void Rasterizer::DrawImage(const unsigned char *bf, const size_t w, const size_t h, Point p) {
     Color c;
     float a, v;
     for (int i = 0; i < w; i++) {
@@ -232,7 +232,7 @@ void Rasterizer::drawImage(const unsigned char *bf, const size_t w, const size_t
             v = float(bf[j * 2 * w + 2 * i]) / 255.0f;
             a = float(bf[j * 2 * w + 2 * i + 1]);
             c = Color(v, v, v, a);
-            setPixel(p.x + i, p.y + j, c);
+            SetPixel(p.x + i, p.y + j, c);
         }
     }
 }
